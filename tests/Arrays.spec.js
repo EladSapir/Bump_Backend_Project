@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 // eslint-disable-next-line no-undef
-describe('Arrays', () => {
+describe('Arrays', ()=>{
   // eslint-disable-next-line no-undef
   describe('sort', () => {
     // eslint-disable-next-line no-undef
