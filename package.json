@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "npx mocha tests/*.spec.js --color",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "lint": "eslint src/* --color"
   },
   "repository": {
     "type": "git",
