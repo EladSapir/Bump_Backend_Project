@@ -1,6 +1,6 @@
 /* eslint-disable no-multiple-empty-lines */
 /* eslint-disable no-unused-vars */
-/* eslint-disable import/no-extraneous-dependencies  */
+/* eslint-disable import/no-extraneous-dependencies   */
 /* eslint-disable brace-style */
 import express from 'express';
 import cors from 'cors';
