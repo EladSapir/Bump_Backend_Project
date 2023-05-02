@@ -1,16 +1,150 @@
+/* eslint-disable no-multiple-empty-lines */
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable brace-style */
 import express from 'express';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
   console.log('Got a request');
   res.send(JSON.stringify('<h3>Hi From Backend API</h3>'));
   return res;
 });
+
+// register
+app.post('/register', (req, res) => {
+});
+
+// login
+app.post('/login', (req, res) => {
+});
+
+// get homepage of a user
+app.get('/users/:id/homepage', (req, res) => {
+});
+
+// get profile of a user
+app.get('/users/:id/profile', (req, res) => {
+});
+
+// get matching search page by user
+app.get('/users/:id/matching', (req, res) => {
+});
+
+
+
+
+// get all users the user is following
+app.get('/users/:id/following', (req, res) => {
+});
+
+// get all users that are following the user
+app.get('/users/:id/followers', (req, res) => {
+});
+
+// get all users by game
+app.get('/users/:game', (req, res) => {
+});
+
+// get user by id
+app.get('/users/:id', (req, res) => {
+});
+
+// update user by id
+app.put('/users/:id', (req, res) => {
+});
+
+// delete user by id
+app.delete('/users/:id', (req, res) => {
+});
+
+// get user by gamer tag
+app.get('/users/:gamerTag', (req, res) => {
+});
+
+// get all posts by user
+app.get('/users/:id/posts', (req, res) => {
+});
+
+// get amount of all comments by user
+app.get('/users/:id/comments', (req, res) => {
+});
+
+// get all posts liked by user
+app.get('/posts/:id/liked', (req, res) => {
+});
+
+// get all posts saved by user
+app.get('/posts/:id/saved', (req, res) => {
+});
+
+// get all posts shared by user
+app.get('/posts/:id/shared', (req, res) => {
+});
+
+
+
+
+// create post
+app.post('/posts', (req, res) => {
+});
+
+// update post by id
+app.put('/posts/:id', (req, res) => {
+});
+
+// delete post by id
+app.delete('/posts/:id', (req, res) => {
+});
+
+
+
+
+// get all comments by post id
+app.get('/comments/:id', (req, res) => {
+});
+
+// get comment by id
+app.get('/comments/:id', (req, res) => {
+});
+
+// create comment
+app.post('/comments', (req, res) => {
+});
+
+// delete comment by id
+app.delete('/comments/:id', (req, res) => {
+});
+
+
+
+
+// get all bumps of a post by id
+app.get('/bumps/:id', (req, res) => {
+});
+
+// create bump
+app.post('/bump', (req, res) => {
+});
+
+// delete bump by id
+app.delete('/bump/:id', (req, res) => {
+});
+
+
+
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Server has started on port: ${PORT}`);
