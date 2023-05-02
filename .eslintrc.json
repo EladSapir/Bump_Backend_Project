@@ -11,10 +11,6 @@
         "sourceType": "module"
     },
     "rules": {
-        "linebreak-style": [
-            "error",
-            "windows"
-          ]
     },
     "ignorePatterns":["src/*.html"]
 }
