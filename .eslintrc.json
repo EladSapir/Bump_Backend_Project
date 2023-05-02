@@ -11,6 +11,10 @@
         "sourceType": "module"
     },
     "rules": {
+        "linebreak-style": [
+            "error",
+            "unix"
+          ]
     },
     "ignorePatterns":["src/*.html"]
 }
