@@ -1,3 +1,5 @@
+/* eslint-disable import/extensions */
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-multiple-empty-lines */
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/no-extraneous-dependencies   */
@@ -11,12 +13,12 @@ import DbApi from '../api/DbApi.js';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
-const dbURI='mongodb+srv://bumpAdmin:bumpSCE12345@bumpdb.gr2nk3i.mongodb.net/BumpDB?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://bumpAdmin:bumpSCE12345@bumpdb.gr2nk3i.mongodb.net/BumpDB?retryWrites=true&w=majority';
 mongoose.connect(dbURI)
-    .then((result) =>{
-      console.log('Connected to the DataBase successfully');
-    })
-    .catch((err) => console.log(err));
+  .then((result) => {
+    console.log('Connected to the DataBase successfully');
+  })
+  .catch((err) => console.log(err));
 
 
 app.use(cors());
@@ -29,8 +31,8 @@ app.get('/', (req, res) => {
   return res;
 });
 
-//checks!! 
-app.get('/test/:id', async function(req, res) {
+// checks!!
+app.get('/test/:id', async (req, res) => {
   const solalGay = await DbApi.whoFollowsTheID(req.params.id);
   res.json(solalGay);
 });
