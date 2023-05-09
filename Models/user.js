@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const UserSchema=new Schema({
     Email: {type: String, required: true },
@@ -18,4 +18,4 @@ const UserSchema=new Schema({
 },{timestamps:true});
 
 const User=mongoose.model('User',UserSchema);
-module.exports=User;
+export default User;

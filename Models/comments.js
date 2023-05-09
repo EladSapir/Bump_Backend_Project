@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const commentsschemma=new Schema({
     postID:{type:ObjectId,required:true},
@@ -7,4 +7,4 @@ const commentsschemma=new Schema({
     text: {type: String, required: true },
 },{timestamps:true});
 const Comments=mongoose.model('Comments',commentsschemma);
-module.exports=Comments;
+export default Comments;

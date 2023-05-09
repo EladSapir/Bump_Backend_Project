@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const ValorantSchema=new Schema({
     Server:{type:String,required:true},
@@ -8,4 +8,4 @@ const ValorantSchema=new Schema({
 });
 
 const Valorant=mongoose.model('Valorant',ValorantSchema);
-module.exports=Valorant;
+export default Valorant;

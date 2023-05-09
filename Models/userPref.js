@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const userPrefSchema=new Schema({
     userID:{type:ObjectId,required:true},
@@ -8,4 +8,4 @@ const userPrefSchema=new Schema({
 },{timestamps:true});
 
 const UserPref=mongoose.model('UserPref',userPrefSchema);
-module.exports=UserPref;
+export default UserPref;

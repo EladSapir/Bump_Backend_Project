@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const FollowsSchema=new Schema({
     userID1:{type:ObjectId,required:true},
@@ -7,4 +7,4 @@ const FollowsSchema=new Schema({
 });
 
 const Follows=mongoose.model('Follows',FollowsSchema);
-module.exports=Follows;
+export default Follows;

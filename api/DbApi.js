@@ -1,16 +1,17 @@
-const Bumps = require('./Models/bumps');
-const Comments = require('./Models/comments');
-const Follows = require('./Models/Follows');
-const LeagueOfLegends = require('./Models/LeagueOfLegends');
-const LoggedIn = require('./Models/LoggedIn');
-const Matches = require('./Models/matches');
-const Posts = require('./Models/Posts');
-const RocketLeague = require('./Models/RocketLeague');
-const SavedPosts = require('./Models/SavedPosts');
-const Shares = require('./Models/shares');
-const User = require('./Models/user');
-const UserPref = require('./Models/userPref');
-const Valorant = require('./Models/Valorant');
+import Bumps from '../Models/bumps.js';
+import Comments from '../Models/comments.js';
+import Follows from '../Models/Follows.js';
+import LeagueOfLegends from '../Models/LeagueOfLegends.js';
+import LoggedIn from '../Models/LoggedIn.js';
+import Matches from '../Models/matches.js';
+import Posts from '../Models/Posts.js';
+import RocketLeague from '../Models/RocketLeague.js';
+import SavedPosts from '../Models/SavedPosts.js';
+import Shares from '../Models/shares.js';
+import User from '../Models/user.js';
+import UserPref from '../Models/userPref.js';
+import Valorant from '../Models/Valorant.js';
+
 
 //if exists the object is returned , otherwise false
 function checkIfEmailExistsInUsers(TEmail) {
@@ -455,35 +456,35 @@ async function removeUser(userId){
   //console.log(`saved: ${saved}`);
 }
 
-
-module.exports.checkIfEmailExistsInUsers = checkIfEmailExistsInUsers;
-module.exports.checkIfGamerTagExistsInUsers = checkIfGamerTagExistsInUsers;
-module.exports.whoFollowsTheID = whoFollowsTheID;
-module.exports.signIn = signIn;
-module.exports.signUp = signUp;
-module.exports.checkIfRLprefExists = checkIfRLprefExists;
-module.exports.checkIfLOLprefExists = checkIfLOLprefExists;
-module.exports.checkIfValprefExists = checkIfValprefExists;
-module.exports.whoIDFollows = whoIDFollows;
-module.exports.searchUserPref = searchUserPref;
-module.exports.addPrefToUser = addPrefToUser;
-module.exports.checkIfUserIDExistsInUsers = checkIfUserIDExistsInUsers;
-module.exports.countBumpsOnUserID = countBumpsOnUserID;
-module.exports.countSharesOnUserID = countSharesOnUserID;
-module.exports.countCommentsOnUserID = countCommentsOnUserID;
-module.exports.countSavedPostOnUserID = countSavedPostOnUserID;
-module.exports.didIdAlreadyBumpedPost = didIdAlreadyBumpedPost;
-module.exports.addBumpToPost = addBumpToPost;
-module.exports.createPost = createPost;
-module.exports.editPost = editPost;
-module.exports.addCommentToPost = addCommentToPost;
-module.exports.editComment = editComment;
-module.exports.addSaveToPost = addSaveToPost;
-module.exports.addShareToPost = addShareToPost;
-module.exports.addAFollowerToId = addAFollowerToId;
-module.exports.removeAFollowerFromId = removeAFollowerFromId;
-module.exports.removeBumpFromAPost = removeBumpFromAPost;
-module.exports.removeCommentFromAPost=removeCommentFromAPost;
-module.exports.removeShareFromAPost=removeShareFromAPost;
-module.exports.removeSavedPostFromAPost=removeSavedPostFromAPost;
-module.exports.removePost=removePost;
+export default {
+checkIfEmailExistsInUsers ,
+checkIfGamerTagExistsInUsers ,
+whoFollowsTheID ,
+signIn ,
+signUp ,
+checkIfRLprefExists ,
+checkIfLOLprefExists ,
+checkIfValprefExists ,
+whoIDFollows ,
+searchUserPref,
+addPrefToUser ,
+checkIfUserIDExistsInUsers ,
+countBumpsOnUserID ,
+countSharesOnUserID ,
+countCommentsOnUserID ,
+countSavedPostOnUserID ,
+didIdAlreadyBumpedPost ,
+addBumpToPost ,
+createPost ,
+editPost,
+addCommentToPost,
+editComment ,
+addSaveToPost ,
+addShareToPost,
+addAFollowerToId ,
+removeAFollowerFromId ,
+removeBumpFromAPost ,
+removeCommentFromAPost,
+removeShareFromAPost,
+removeSavedPostFromAPost,
+removePost}

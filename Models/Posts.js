@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const PostSchema=new Schema({
     userID:{type:ObjectId,required:true},
@@ -11,4 +11,4 @@ const PostSchema=new Schema({
 },{timestamps:true});
 
 const Post=mongoose.model('Post',PostSchema);
-module.exports=Post;
+export default Post;

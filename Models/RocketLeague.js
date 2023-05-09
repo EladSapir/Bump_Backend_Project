@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const RocketLeagueSchema=new Schema({
     Region:{type:String,required:true},
@@ -8,4 +8,4 @@ const RocketLeagueSchema=new Schema({
 });
 
 const RocketLeague=mongoose.model('RocketLeague',RocketLeagueSchema);
-module.exports=RocketLeague;
+export default RocketLeague;

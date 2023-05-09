@@ -5,9 +5,19 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import DbApi from '../api/DbApi.js';
+
 
 const PORT = process.env.PORT || 5000;
 const app = express();
+const dbURI='mongodb+srv://bumpAdmin:bumpSCE12345@bumpdb.gr2nk3i.mongodb.net/BumpDB?retryWrites=true&w=majority';
+mongoose.connect(dbURI)
+    .then((result) =>{
+      console.log('Connected to the DataBase successfully');
+    })
+    .catch((err) => console.log(err));
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -19,125 +29,131 @@ app.get('/', (req, res) => {
   return res;
 });
 
-// register
-app.post('/register', (req, res) => {
+//checks!! 
+app.get('/test/:id', async function(req, res) {
+  const solalGay = await DbApi.whoFollowsTheID(req.params.id);
+  res.json(solalGay);
 });
 
-// login
-app.post('/login', (req, res) => {
-});
+// // register
+// app.post('/register', (req, res) => {
+// });
 
-// get homepage of a user
-app.get('/users/:id/homepage', (req, res) => {
-});
+// // login
+// app.post('/login', (req, res) => {
+// });
 
-// get profile of a user
-app.get('/users/:id/profile', (req, res) => {
-});
+// // get homepage of a user
+// app.get('/users/:id/homepage', (req, res) => {
+// });
 
-// get matching search page by user
-app.get('/users/:id/matching', (req, res) => {
-});
+// // get profile of a user
+// app.get('/users/:id/profile', (req, res) => {
+// });
 
-
-
-
-// get all users the user is following
-app.get('/users/:id/following', (req, res) => {
-});
-
-// get all users that are following the user
-app.get('/users/:id/followers', (req, res) => {
-});
-
-// get all users by game
-app.get('/users/:game', (req, res) => {
-});
-
-// get user by id
-app.get('/users/:id', (req, res) => {
-});
-
-// update user by id
-app.put('/users/:id', (req, res) => {
-});
-
-// delete user by id
-app.delete('/users/:id', (req, res) => {
-});
-
-// get user by gamer tag
-app.get('/users/:gamerTag', (req, res) => {
-});
-
-// get all posts by user
-app.get('/users/:id/posts', (req, res) => {
-});
-
-// get amount of all comments by user
-app.get('/users/:id/comments', (req, res) => {
-});
-
-// get all posts liked by user
-app.get('/posts/:id/liked', (req, res) => {
-});
-
-// get all posts saved by user
-app.get('/posts/:id/saved', (req, res) => {
-});
-
-// get all posts shared by user
-app.get('/posts/:id/shared', (req, res) => {
-});
+// // get matching search page by user
+// app.get('/users/:id/matching', (req, res) => {
+// });
 
 
 
 
-// create post
-app.post('/posts', (req, res) => {
-});
+// // get all users the user is following
+// app.get('/users/:id/following', (req, res) => {
+// });
 
-// update post by id
-app.put('/posts/:id', (req, res) => {
-});
+// // get all users that are following the user
+// app.get('/users/:id/followers', (req, res) => {
+// });
 
-// delete post by id
-app.delete('/posts/:id', (req, res) => {
-});
+// // get all users by game
+// app.get('/users/:game', (req, res) => {
+// });
+
+// // get user by id
+// app.get('/users/:id', (req, res) => {
+// });
+
+// // update user by id
+// app.put('/users/:id', (req, res) => {
+// });
+
+// // delete user by id
+// app.delete('/users/:id', (req, res) => {
+// });
+
+// // get user by gamer tag
+// app.get('/users/:gamerTag', (req, res) => {
+// });
+
+// // get all posts by user
+// app.get('/users/:id/posts', (req, res) => {
+// });
+
+// // get amount of all comments by user
+// app.get('/users/:id/comments', (req, res) => {
+// });
+
+// // get all posts liked by user
+// app.get('/posts/:id/liked', (req, res) => {
+// });
+
+// // get all posts saved by user
+// app.get('/posts/:id/saved', (req, res) => {
+// });
+
+// // get all posts shared by user
+// app.get('/posts/:id/shared', (req, res) => {
+// });
 
 
 
 
-// get all comments by post id
-app.get('/comments/:id', (req, res) => {
-});
+// // create post
+// app.post('/posts', (req, res) => {
+// });
 
-// get comment by id
-app.get('/comments/:id', (req, res) => {
-});
+// // update post by id
+// app.put('/posts/:id', (req, res) => {
+// });
 
-// create comment
-app.post('/comments', (req, res) => {
-});
-
-// delete comment by id
-app.delete('/comments/:id', (req, res) => {
-});
+// // delete post by id
+// app.delete('/posts/:id', (req, res) => {
+// });
 
 
 
 
-// get all bumps of a post by id
-app.get('/bumps/:id', (req, res) => {
-});
+// // get all comments by post id
+// app.get('/comments/:id', (req, res) => {
+// });
 
-// create bump
-app.post('/bump', (req, res) => {
-});
+// // get comment by id
+// app.get('/comments/:id', (req, res) => {
+// });
 
-// delete bump by id
-app.delete('/bump/:id', (req, res) => {
-});
+// // create comment
+// app.post('/comments', (req, res) => {
+// });
+
+// // delete comment by id
+// app.delete('/comments/:id', (req, res) => {
+// });
+
+
+
+
+// // get all bumps of a post by id
+// app.get('/bumps/:id', (req, res) => {
+// });
+
+// // create bump
+// app.post('/bump', (req, res) => {
+// });
+
+// // delete bump by id
+// app.delete('/bump/:id', (req, res) => {
+// });
 
 
 

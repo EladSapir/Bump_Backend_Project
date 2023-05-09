@@ -1,9 +1,9 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const BumpsSchema=new Schema({
     postID:{type:ObjectId,required:true},
     userID:{type:ObjectId,required:true}
 });
 const Bumps=mongoose.model('Bumps',BumpsSchema);
-module.exports=Bumps;
+export default Bumps;

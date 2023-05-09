@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
+import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 const Schema= mongoose.Schema;
 const matchesSchema=new Schema({
     userID1:{type:ObjectId,required:true},
@@ -9,4 +9,4 @@ const matchesSchema=new Schema({
 },{timestamps:true});
 
 const Matches=mongoose.model('Matches',matchesSchema);
-module.exports=Matches;
+export default Matches;
