@@ -1,14 +1,31 @@
-//GET http://localhost:5000/test/64524121806a7b42422e4fa2
+########
+GET http://localhost:5000/test/64524121806a7b42422e4fa2
 
-
-
-
-
-/////////
+########
 POST http://localhost:5000/login
 Content-Type:  application/json
 
 {
     "email":"15111@example.com",
     "password":"password123"
+}
+
+######
+POST http://localhost:5000/register
+Content-Type:  application/json
+
+{
+    "email":"solal@example.com",
+    "gamertag":"solal123",
+    "password":"password12",
+    "gender":"male",
+    "dob":"1994-12-24T00:00:00.000Z",
+    "g1":"1",
+    "g2":"Europe",
+    "g3":"Ranked - Solo",
+    "g4":"Bronze",
+    "discord":"spontexx",
+    "country":"France",
+    "language":"French",
+    "picture":" "
 }

@@ -111,22 +111,21 @@ function checkIfRLprefExists(region, mode, rank) {
 //returns 1 if email exists in the system
 //returns 2 if gamertag exists in the system
 //else the id of the new user is returned
+// SEND ALL THE PARAMETERS (EVEN THE ONE THAT ARE NOT USED SEND THEM AS NULL)
 async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2, game3, game4, game5, TDiscord, Tcountry, Tlanguage, Tpicture) {
   if (await checkIfEmailExistsInUsers(TEmail)) {
-    console.log("email exists");
     return 1;
   }
   if (await checkIfGamerTagExistsInUsers(TgamerTag)) {
-    console.log("gamerTag exists");
     return 2;
   }
   switch (game1) {
-    case 0:
+    case "0":
       //LOL
-      pref = await checkIfLOLprefExists(game2, game3, game4, game5);
-      if (!pref) {
+      var pref0 = await checkIfLOLprefExists(game2, game3, game4, game5);
+      if (!pref0) {
         const newLOL = new LeagueOfLegends({ Region: game2, Mode: game3, Role: game4, Rank: game5 });
-        pref = await newLOL.save().then((res) => { return res._id });
+        pref0 = await newLOL.save().then((res) => { return res._id });
       }
       const newUser0 = new User({
         Email: TEmail,
@@ -134,22 +133,22 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
         Password: Tpassword,
         Gender: Tgender,
         DoB: TDoB,
-        LoLpref: pref, // replace with valid ObjectId
+        LoLpref: pref0, // replace with valid ObjectId
         Discord: TDiscord,
         Country: Tcountry,
         Language: Tlanguage,
         Picture: Tpicture
       });
-      id = await newUser0.save().then((res) => { return res._id });
-      await addPrefToUser(id, 0, pref);
+      const id0 = await newUser0.save().then((res) => { return res._id });
+      await addPrefToUser(id0, 0, pref0);
       await signIn(TEmail, Tpassword);
-      return id;
-    case 1:
+      return id0;
+    case "1":
       //RL
-      pref = await checkIfLOLprefExists(game2, game3, game4, game5);
-      if (!pref) {
+      var pref1 = await checkIfLOLprefExists(game2, game3, game4, game5);
+      if (!pref1) {
         const newRocket = new RocketLeague({ Region: game2, Mode: game3, Rank: game4 });
-        pref = await newRocket.save().then((res) => { return res._id });
+        pref1 = await newRocket.save().then((res) => { return res._id });
       }
       const newUser1 = new User({
         Email: TEmail,
@@ -157,22 +156,22 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
         Password: Tpassword,
         Gender: Tgender,
         DoB: TDoB,
-        RLpref: pref, // replace with valid ObjectId
+        RLpref: pref1, // replace with valid ObjectId
         Discord: TDiscord,
         Country: Tcountry,
         Language: Tlanguage,
         Picture: Tpicture
       });
-      id = await newUser1.save().then((res) => { return res._id });
-      await addPrefToUser(id, 1, pref);
+      const id1 = await newUser1.save().then((res) => { return res._id });
+      await addPrefToUser(id1, 1, pref1);
       await signIn(TEmail, Tpassword);
-      return id;
-    case 2:
+      return id1;
+    case "2":
       //VAL
-      pref = await checkIfLOLprefExists(game2, game3, game4, game5);
-      if (!pref) {
+      var pref2 = await checkIfLOLprefExists(game2, game3, game4, game5);
+      if (!pref2) {
         const newVal = new Valorant({ Server: game2, Rank: game3, Role: game4 });
-        pref = await newVal.save().then((res) => { return res._id });
+        pref2 = await newVal.save().then((res) => { return res._id });
       }
       const newUser2 = new User({
         Email: TEmail,
@@ -180,16 +179,16 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
         Password: Tpassword,
         Gender: Tgender,
         DoB: TDoB,
-        Valpref: pref, // replace with valid ObjectId
+        Valpref: pref2, // replace with valid ObjectId
         Discord: TDiscord,
         Country: Tcountry,
         Language: Tlanguage,
         Picture: Tpicture
       });
-      id = await newUser2.save().then((res) => { return res._id });
-      await addPrefToUser(id, 2, pref);
+      const id2 = await newUser2.save().then((res) => { return res._id });
+      await addPrefToUser(id2, 2, pref2);
       await signIn(TEmail, Tpassword);
-      return id;
+      return id2;
   }
 }
 
@@ -212,10 +211,10 @@ function whoIDFollows(ID) {
 // if only by id enter null to Tgame
 async function searchUserPref(Tuserid, Tgame) {
   if (Tgame != null) {
-    gamepref = await UserPref.findOne({ userID: Tuserid, game: Tgame });
+    var gamepref = await UserPref.findOne({ userID: Tuserid, game: Tgame });
   }
   else {
-    gamepref = await UserPref.find({ userID: Tuserid });
+    var gamepref = await UserPref.find({ userID: Tuserid });
   }
   return gamepref;
 }
@@ -223,13 +222,12 @@ async function searchUserPref(Tuserid, Tgame) {
 //if the user already has a pref to this game it will be updated to the new pref.
 //otherwise will be added to the database.
 async function addPrefToUser(Tuserid, Tgame, Tprefid) {
-  res = await searchUserPref(Tuserid, Tgame);
-  console.log(res);
+  var res = await searchUserPref(Tuserid, Tgame);
   if (res) {
     await UserPref.updateOne({ _id: res._id }, { prefID: Tprefid });
   }
   else {
-    newUserPref = new UserPref({ userID: Tuserid, game: Tgame, prefID: Tprefid })
+    var newUserPref = new UserPref({ userID: Tuserid, game: Tgame, prefID: Tprefid })
     await newUserPref.save();
   }
   return true;

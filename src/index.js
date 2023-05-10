@@ -38,8 +38,36 @@ app.get('/test/:id', async (req, res) => {
 });
 
 // // register
-// app.post('/register', (req, res) => {
-// });
+app.post('/register', async (req, res) => {
+  const email = req.body.email;
+  const gamertag=req.body.gamertag;
+  const password = req.body.password;
+  const gender = req.body.gender;
+  const dob=req.body.dob;
+  const g1=req.body.g1;
+  const g2=req.body.g2;
+  const g3=req.body.g3;
+  const g4=req.body.g4;
+  const g5=req.body.g5;
+  const discord=req.body.discord;
+  const country =req.body.country;
+  const language = req.body.language;
+  const picture=req.body.picture;
+  const id =await DbApi.signUp(email,gamertag,password,gender,dob,g1,g2,g3,g4,g5,discord,country,language,picture);
+  if(id == 1 ){
+    res.send('email already exists');
+  }
+  else
+  {
+    if(id ==2){
+      res.send('gamerTag exists');
+    }
+    else
+    {
+      res.json({"id":id});
+    }
+  }
+});
 
 // // login
 app.post('/login', async (req, res) => {
@@ -56,11 +84,9 @@ app.post('/login', async (req, res) => {
     }
     else
     {
-      res.send(id);
+      res.json({"id":id});
     }
   }
-  
-  
 });
 
 // // get homepage of a user
