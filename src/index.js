@@ -33,8 +33,8 @@ app.get('/', (req, res) => {
 
 // checks!!
 app.get('/test/:id', async (req, res) => {
-  const solalGay = await DbApi.whoFollowsTheID(req.params.id);
-  res.json(solalGay);
+  const followers = await DbApi.whoFollowsTheID(req.params.id);
+  res.json(followers);
 });
 
 // // register
