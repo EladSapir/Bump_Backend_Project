@@ -42,8 +42,26 @@ app.get('/test/:id', async (req, res) => {
 // });
 
 // // login
-// app.post('/login', (req, res) => {
-// });
+app.post('/login', async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const id =await DbApi.signIn(email,password);
+  if(id == 1 ){
+    res.send('email/password not right');
+  }
+  else
+  {
+    if(id ==2){
+      res.send('already logged in');
+    }
+    else
+    {
+      res.send(id);
+    }
+  }
+  
+  
+});
 
 // // get homepage of a user
 // app.get('/users/:id/homepage', (req, res) => {

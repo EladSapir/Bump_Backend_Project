@@ -54,17 +54,24 @@ function whoFollowsTheID(ID) {
 }
 
 // returns id of the user if signed in correctly, if already signed in returns false.
+// returns 2 if already signed in 
+//returns 1 if email/password not right
 async function signIn(TEmail, Tpassword) {
-  id = await User.findOne({ Email: TEmail, Password: Tpassword }, { _id: 1 });
+  const id = await User.findOne({ Email: TEmail, Password: Tpassword }, { _id: 1 });
   if (id) {
-    res = LoggedIn.findOne({ _id: id })
-    if (!res) { }
-    const newLoggedIn = new LoggedIn({ userID: result._id });
-    newLoggedIn.save();
-    return id;
+    const res = await LoggedIn.findOne({ userID: id})
+    if (res == null) {
+      const newLoggedIn = new LoggedIn({ userID: id});
+      newLoggedIn.save();
+      return id;
+    }
+    else
+    {
+      return 2
+    }
   }
   else {
-    return false;
+    return 1;
   }
 
 }
@@ -384,19 +391,19 @@ async function removeBumpFromAPost(userId, postId) {
     await Bumps.deleteOne({ _id: toDelete._id });
 
     return ans.acknowledged;
-  } 
+  }
   else
     return false;
 }
 
 //remove specific comment from given post id
 async function removeCommentFromAPost(userId, postId, commentId) {
-  toDelete = await Comments.findOne({ _id:commentId, userID: userId, postID: postId });
+  toDelete = await Comments.findOne({ _id: commentId, userID: userId, postID: postId });
   if (toDelete) {
     ans = await Posts.updateOne({ _id: postId }, { $pull: { comments: toDelete._id } });
     await Comments.deleteOne({ _id: toDelete._id });
     return ans.acknowledged;
-  } 
+  }
   else
     return false;
 }
@@ -404,87 +411,88 @@ async function removeCommentFromAPost(userId, postId, commentId) {
 
 //remove specific share from given post id
 async function removeShareFromAPost(userId, postId, sharedId) {
-  toDelete = await Shares.findOne({ _id:sharedId, userID: userId, postID: postId });
+  toDelete = await Shares.findOne({ _id: sharedId, userID: userId, postID: postId });
   if (toDelete) {
     ans = await Posts.updateOne({ _id: postId }, { $pull: { shares: toDelete._id } });
     await Shares.deleteOne({ _id: toDelete._id });
     return ans.acknowledged;
-  } 
+  }
   else
     return false;
 }
 
 //remove specific comment from given post id
 async function removeSavedPostFromAPost(userId, postId) {
-  toDelete = await SavedPosts.findOne({userID: userId, postID: postId });
+  toDelete = await SavedPosts.findOne({ userID: userId, postID: postId });
   if (toDelete) {
     await SavedPosts.deleteOne({ _id: toDelete._id });
     return ans.acknowledged;
-  } 
+  }
   else
     return false;
 }
 
 //remove a post by id
-async function removePost(postId){
-  postToDel = await Posts.deleteOne({_id:postId});
-  bumpsToDel = await Bumps.deleteMany({postID:postId});
-  commentsToDel = await Comments.deleteMany({postID:postId});
-  sharesToDel= await Shares.deleteMany({postID:postId});
-  savedToDel= await SavedPosts.deleteMany({postID:postId});
+async function removePost(postId) {
+  postToDel = await Posts.deleteOne({ _id: postId });
+  bumpsToDel = await Bumps.deleteMany({ postID: postId });
+  commentsToDel = await Comments.deleteMany({ postID: postId });
+  sharesToDel = await Shares.deleteMany({ postID: postId });
+  savedToDel = await SavedPosts.deleteMany({ postID: postId });
   return true;
 }
 
 ////change to deleteOne ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3times ~~~~~~~~~~~~~~~~~~~~~~ !!!!!!!!!!!!!!!!!!!!!!
-async function removeUser(userId){
-  userToDel = await User.findOne({_id:userId});
+async function removeUser(userId) {
+  userToDel = await User.findOne({ _id: userId });
   for (let index = 0; index < userToDel.Bumps.length; index++) {
-    bump = await Bumps.findOne({_id:userToDel.Bumps[index]})
+    bump = await Bumps.findOne({ _id: userToDel.Bumps[index] })
     //console.log(`bump: ${bump}`);
     //change to deleteOne
   }
   for (let index = 0; index < userToDel.Comments.length; index++) {
-    comment = await Comments.findOne({_id:userToDel.Comments[index]})
+    comment = await Comments.findOne({ _id: userToDel.Comments[index] })
     //console.log(`comment: ${comment}`);
   }
   for (let index = 0; index < userToDel.Shares.length; index++) {
-    share = await Shares.findOne({_id:userToDel.Shares[index]})
+    share = await Shares.findOne({ _id: userToDel.Shares[index] })
     //console.log(`share: ${share}`);
   }
   //await SavedPosts.deleteMany({userID:userId});
-  saved = await SavedPosts.find({userID:userId});
+  saved = await SavedPosts.find({ userID: userId });
   //console.log(`saved: ${saved}`);
 }
 
 export default {
-checkIfEmailExistsInUsers ,
-checkIfGamerTagExistsInUsers ,
-whoFollowsTheID ,
-signIn ,
-signUp ,
-checkIfRLprefExists ,
-checkIfLOLprefExists ,
-checkIfValprefExists ,
-whoIDFollows ,
-searchUserPref,
-addPrefToUser ,
-checkIfUserIDExistsInUsers ,
-countBumpsOnUserID ,
-countSharesOnUserID ,
-countCommentsOnUserID ,
-countSavedPostOnUserID ,
-didIdAlreadyBumpedPost ,
-addBumpToPost ,
-createPost ,
-editPost,
-addCommentToPost,
-editComment ,
-addSaveToPost ,
-addShareToPost,
-addAFollowerToId ,
-removeAFollowerFromId ,
-removeBumpFromAPost ,
-removeCommentFromAPost,
-removeShareFromAPost,
-removeSavedPostFromAPost,
-removePost}
+  checkIfEmailExistsInUsers,
+  checkIfGamerTagExistsInUsers,
+  whoFollowsTheID,
+  signIn,
+  signUp,
+  checkIfRLprefExists,
+  checkIfLOLprefExists,
+  checkIfValprefExists,
+  whoIDFollows,
+  searchUserPref,
+  addPrefToUser,
+  checkIfUserIDExistsInUsers,
+  countBumpsOnUserID,
+  countSharesOnUserID,
+  countCommentsOnUserID,
+  countSavedPostOnUserID,
+  didIdAlreadyBumpedPost,
+  addBumpToPost,
+  createPost,
+  editPost,
+  addCommentToPost,
+  editComment,
+  addSaveToPost,
+  addShareToPost,
+  addAFollowerToId,
+  removeAFollowerFromId,
+  removeBumpFromAPost,
+  removeCommentFromAPost,
+  removeShareFromAPost,
+  removeSavedPostFromAPost,
+  removePost
+}
