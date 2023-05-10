@@ -15,8 +15,8 @@ POST http://localhost:5000/register
 Content-Type:  application/json
 
 {
-    "email":"elad@example.com",
-    "gamertag":"elad123",
+    "email":"elad12345@example.com",
+    "gamertag":"elad12345",
     "password":"password12",
     "gender":"male",
     "dob":"1994-12-24T00:00:00.000Z",
