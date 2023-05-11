@@ -7,3 +7,4 @@ const savedpostsSchema=new Schema({
 });
 const Savedposts=mongoose.model('Savedposts',savedpostsSchema);
 export default Savedposts;
+
