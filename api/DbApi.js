@@ -468,7 +468,8 @@ async function removeUser(userId) {
 }
 
 
-//builds an object of a post by a post id
+//builds an object of a post by a post id 
+//with all that is needed for the post
 async function makePostForPostId(postId) {
   var post = await Posts.findOne({ _id: postId });
   var user = await User.findOne({ _id: post.userID });
@@ -525,6 +526,7 @@ async function makePostForPostId(postId) {
   }
 }
 
+//gets all the posts of a user and sorts them by date.
 async function getThePostsOfAUser(userId) {
   var myPosts = await Posts.find({ userID: userId },{_id:1});
 
@@ -538,6 +540,7 @@ async function getThePostsOfAUser(userId) {
   return posts;
 }
 
+//gets all the posts that a user has shared and returns them in a list.
 async function getThePostsAUserShared(userId) {
   var mySharedPosts = await Shares.find({ userID: userId }, { postID: 1 });
 
@@ -552,6 +555,7 @@ async function getThePostsAUserShared(userId) {
   return posts;
 }
 
+//returns all the posts that the user has bumped.
 async function getThePostsAUserBumped(userId) {
   var myLikedPosts = await Bumps.find({ userID: userId }, { postID: 1 });
 
@@ -565,6 +569,7 @@ async function getThePostsAUserBumped(userId) {
   return posts;
 }
 
+//gets all the posts a user has saved.
 async function getThePostsAUserSaved(userId) {
   var mySavedPosts = await Bumps.find({ userID: userId }, { postID: 1 });
 
