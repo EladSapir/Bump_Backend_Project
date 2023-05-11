@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Bumps from '../Models/bumps.js';
 import Comments from '../Models/comments.js';
 import Follows from '../Models/Follows.js';
@@ -59,14 +60,13 @@ function whoFollowsTheID(ID) {
 async function signIn(TEmail, Tpassword) {
   const id = await User.findOne({ Email: TEmail, Password: Tpassword }, { _id: 1 });
   if (id) {
-    const res = await LoggedIn.findOne({ userID: id})
+    const res = await LoggedIn.findOne({ userID: id })
     if (res == null) {
-      const newLoggedIn = new LoggedIn({ userID: id});
+      const newLoggedIn = new LoggedIn({ userID: id });
       newLoggedIn.save();
       return id;
     }
-    else
-    {
+    else {
       return 2
     }
   }
@@ -133,7 +133,7 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
         Password: Tpassword,
         Gender: Tgender,
         DoB: TDoB,
-        RLpref:null,
+        RLpref: null,
         LoLpref: pref0, // replace with valid ObjectId
         Valpref: null,
         Discord: TDiscord,
@@ -159,8 +159,8 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
         Gender: Tgender,
         DoB: TDoB,
         RLpref: pref1, // replace with valid ObjectId
-        LoLpref:null,
-        Valpref:null,
+        LoLpref: null,
+        Valpref: null,
         Discord: TDiscord,
         Country: Tcountry,
         Language: Tlanguage,
@@ -183,8 +183,8 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
         Password: Tpassword,
         Gender: Tgender,
         DoB: TDoB,
-        RLpref:null,
-        LoLpref:null,
+        RLpref: null,
+        LoLpref: null,
         Valpref: pref2, // replace with valid ObjectId
         Discord: TDiscord,
         Country: Tcountry,
@@ -467,6 +467,62 @@ async function removeUser(userId) {
   //console.log(`saved: ${saved}`);
 }
 
+// async function makePostForPostId(postId) {
+//   var post = await Posts.findOne({ _id: postId });
+//   var user = await User.findOne({ _id: post.userID });
+
+//   var ifUserBumped = await Bumps.findOne({ userID: user._id, postID: post._id });
+//   var hasUserBumped = false;
+//   if (ifUserBumped !== null) {
+//     hasUserBumped = true;
+//   }
+
+//   var ifUserSaved = await SavedPosts.findOne({ userID: user._id, postID: post._id });
+//   var hasUserSaved = false;
+//   if (ifUserSaved !== null) {
+//     hasUserSaved = true;
+//   }
+
+//   var ifUserShared = await Shares.findOne({ userID: user._id, postID: post._id });
+//   var hasUserShared = false;
+//   if (ifUserShared !== null) {
+//     hasUserShared = true;
+//   }
+
+//   var commentsByPostId = await Comments.find({ postID: post._id });
+//   var comments = [];
+//   for (let index = 0; index < commentsByPostId.length; index++) {
+//     var comment = commentsByPostId[index];
+//     var user = await User.findOne({ _id: comment.userID }, { GamerTag: 1, picture: 1 });
+//     var comment = {
+//       _id: comment._id,
+//       GamerTag: user.GamerTag,
+//       Picture: user.Picture,
+//       date: comment.createdAt,
+//       text: comment.text,
+//     }
+//     comments.push(comment);
+//   }
+//   comments.sort((a, b) => b.date - a.date);
+
+
+//   return {
+//     _id: post._id,
+//     userID: user._id,
+//     GamerTag: user.GamerTag,
+//     userProfilePicture: user.picture,
+//     date: post.createdAt,
+//     text: post.text,
+//     picture: post.picture,
+//     numOfBumps: post.bumps.length,
+//     numofshares: post.shares.length,
+//     hasUserBumped: hasUserBumped,
+//     hasUserSaved: hasUserSaved,
+//     hasUserShared: hasUserShared,
+//     comments:comments,
+//   }
+// }
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -498,5 +554,6 @@ export default {
   removeCommentFromAPost,
   removeShareFromAPost,
   removeSavedPostFromAPost,
-  removePost
-}
+  removePost,
+  //makePostForPostId,
+};

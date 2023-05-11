@@ -83,9 +83,14 @@ app.post('/login', async (req, res) => {
 });
 
 
-// // get homepage of a user
-// app.get('/users/:id/homepage', (req, res) => {
-// });
+// get homepage of a user
+app.get('/homepage/:id', (req, res) => {
+});
+
+
+
+
+
 
 // // get profile of a user
 // app.get('/users/:id/profile', (req, res) => {
