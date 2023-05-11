@@ -583,6 +583,30 @@ async function getThePostsAUserSaved(userId) {
   return posts;
 }
 
+// //logout 
+// async function logOut(userId){
+//   var time= await LoggedIn.find({userID:userId},{_id:1,timeLoggedIn:1});
+//   var allTime = await User.find({userID:userId},{timeLoggedIn:1});
+  
+//   await User.updateOne({_id:userId},{timeLoggedIn:})
+// }
+
+async function logOut(userId){
+  const logInData = await LoggedIn.findOne({userID: userId},{createdAt: 1});
+  const timeLoggedIn = logInData.createdAt;
+  const timeLoggedOut = new Date();
+  const timeDifferenceMs = timeLoggedOut - timeLoggedIn;
+  const timeDifferenceSecs = Math.round(timeDifferenceMs / 1000 );
+  const user = await User.findOne({_id: userId},{TimeLoggedIn: 1});
+  const newTotalTime = user.TimeLoggedIn + timeDifferenceSecs;
+  var res1 = await User.updateOne({_id: userId}, {TimeLoggedIn: newTotalTime});
+  var res2 = await LoggedIn.deleteOne({userID:userId});
+  if(res1 && res2){
+    return true;
+  }
+  return false;
+}
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -620,4 +644,5 @@ export default {
   getThePostsAUserShared,
   getThePostsAUserBumped,
   getThePostsAUserSaved,
+  logOut,
 };
