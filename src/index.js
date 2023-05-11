@@ -1,3 +1,6 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-multiple-empty-lines */
@@ -84,8 +87,34 @@ app.post('/login', async (req, res) => {
 
 
 // get homepage of a user
-app.get('/homepage/:id', (req, res) => {
+app.get('/homepage/:id', async (req, res) => {
+  const { id } = req.params;
+
+  let posts = [];
+
+  const following = await DbApi.whoIDFollows(id);
+
+  for (let i = 0; i < following.length; i++) {
+    posts = posts.concat(await DbApi.getThePostsAUserShared(following[i]._id));
+    posts = posts.concat(await DbApi.getThePostsOfAUser(following[i]._id));
+  }
+  posts = posts.concat(await DbApi.getThePostsOfAUser(id));
+  posts = posts.concat(await DbApi.getThePostsAUserShared(id));
+
+  posts.sort((a, b) => b.date - a.date);
+
+  res.json(posts);
 });
+
+
+// get the posts of a user
+app.get('/myposts/:id', (req, res) => {
+  const { id } = req.params;
+  DbApi.getMyPosts(id).then((result) => {
+    res.json(result);
+  });
+});
+
 
 
 

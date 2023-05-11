@@ -273,7 +273,7 @@ async function countSavedPostOnUserID(id) {
 
 //check if given id already bumped a given post id
 async function didIdAlreadyBumpedPost(userid, postid) {
-  bump = await Bumps.findOne({ postID: postid, userID: userid });
+  var bump = await Bumps.findOne({ postID: postid, userID: userid });
   if (!bump) {
     return false;
   }
@@ -283,10 +283,10 @@ async function didIdAlreadyBumpedPost(userid, postid) {
 //returns true after a new bump added
 //if already bumped this post, will return false
 async function addBumpToPost(postid, userid) {
-  bool = await didIdAlreadyBumpedPost(userid, postid);
+  var bool = await didIdAlreadyBumpedPost(userid, postid);
   if (bool == false) {
-    newbump = new Bumps({ postID: postid, userID: userid });
-    bump = await newbump.save();
+    var newbump = new Bumps({ postID: postid, userID: userid });
+    var bump = await newbump.save();
     await Posts.updateOne({ _id: postid }, { $push: { bumps: bump._id } })
     return true;
   }
@@ -467,61 +467,116 @@ async function removeUser(userId) {
   //console.log(`saved: ${saved}`);
 }
 
-// async function makePostForPostId(postId) {
-//   var post = await Posts.findOne({ _id: postId });
-//   var user = await User.findOne({ _id: post.userID });
 
-//   var ifUserBumped = await Bumps.findOne({ userID: user._id, postID: post._id });
-//   var hasUserBumped = false;
-//   if (ifUserBumped !== null) {
-//     hasUserBumped = true;
-//   }
+//builds an object of a post by a post id
+async function makePostForPostId(postId) {
+  var post = await Posts.findOne({ _id: postId });
+  var user = await User.findOne({ _id: post.userID });
 
-//   var ifUserSaved = await SavedPosts.findOne({ userID: user._id, postID: post._id });
-//   var hasUserSaved = false;
-//   if (ifUserSaved !== null) {
-//     hasUserSaved = true;
-//   }
+  var ifUserBumped = await Bumps.findOne({ userID: user._id, postID: post._id });
+  var hasUserBumped = false;
+  if (ifUserBumped !== null) {
+    hasUserBumped = true;
+  }
 
-//   var ifUserShared = await Shares.findOne({ userID: user._id, postID: post._id });
-//   var hasUserShared = false;
-//   if (ifUserShared !== null) {
-//     hasUserShared = true;
-//   }
+  var ifUserSaved = await SavedPosts.findOne({ userID: user._id, postID: post._id });
+  var hasUserSaved = false;
+  if (ifUserSaved !== null) {
+    hasUserSaved = true;
+  }
 
-//   var commentsByPostId = await Comments.find({ postID: post._id });
-//   var comments = [];
-//   for (let index = 0; index < commentsByPostId.length; index++) {
-//     var comment = commentsByPostId[index];
-//     var user = await User.findOne({ _id: comment.userID }, { GamerTag: 1, picture: 1 });
-//     var comment = {
-//       _id: comment._id,
-//       GamerTag: user.GamerTag,
-//       Picture: user.Picture,
-//       date: comment.createdAt,
-//       text: comment.text,
-//     }
-//     comments.push(comment);
-//   }
-//   comments.sort((a, b) => b.date - a.date);
+  var ifUserShared = await Shares.findOne({ userID: user._id, postID: post._id });
+  var hasUserShared = false;
+  if (ifUserShared !== null) {
+    hasUserShared = true;
+  }
 
+  var commentsByPostId = await Comments.find({ postID: post._id });
+  var comments = [];
+  for (let index = 0; index < commentsByPostId.length; index++) {
+    var comment = commentsByPostId[index];
+    var user1 = await User.findOne({ _id: comment.userID }, { GamerTag: 1, picture: 1 });
+    var comment = {
+      _id: comment._id,
+      GamerTag: user1.GamerTag,
+      Picture: user1.Picture,
+      date: comment.createdAt,
+      text: comment.text,
+    }
+    comments.push(comment);
+  }
+  comments.sort((a, b) => b.date - a.date);
 
-//   return {
-//     _id: post._id,
-//     userID: user._id,
-//     GamerTag: user.GamerTag,
-//     userProfilePicture: user.picture,
-//     date: post.createdAt,
-//     text: post.text,
-//     picture: post.picture,
-//     numOfBumps: post.bumps.length,
-//     numofshares: post.shares.length,
-//     hasUserBumped: hasUserBumped,
-//     hasUserSaved: hasUserSaved,
-//     hasUserShared: hasUserShared,
-//     comments:comments,
-//   }
-// }
+  return {
+    _id: post._id,
+    userID: user._id,
+    GamerTag: user.GamerTag,
+    userProfilePicture: user.picture,
+    date: post.createdAt,
+    text: post.text,
+    picture: post.picture,
+    numOfBumps: post.bumps.length,
+    numofshares: post.shares.length,
+    hasUserBumped: hasUserBumped,
+    hasUserSaved: hasUserSaved,
+    hasUserShared: hasUserShared,
+    comments:comments,
+    isShared: false,
+  }
+}
+
+async function getThePostsOfAUser(userId) {
+  var myPosts = await Posts.find({ userID: userId },{_id:1});
+
+  var posts = [];
+  for (let index = 0; index < myPosts.length; index++) {
+    var post = await makePostForPostId(myPosts[index]._id);
+    posts.push(post);
+  }
+  posts.sort((a, b) => b.date - a.date);
+
+  return posts;
+}
+
+async function getThePostsAUserShared(userId) {
+  var mySharedPosts = await Shares.find({ userID: userId }, { postID: 1 });
+
+  var posts = [];
+  for (let index = 0; index < mySharedPosts.length; index++) {
+    var post = await makePostForPostId(mySharedPosts[index].postID);
+    post.isShared = true;
+    posts.push(post);
+  }
+  posts.sort((a, b) => b.date - a.date);
+
+  return posts;
+}
+
+async function getThePostsAUserBumped(userId) {
+  var myLikedPosts = await Bumps.find({ userID: userId }, { postID: 1 });
+
+  var posts = [];
+  for (let index = 0; index < myLikedPosts.length; index++) {
+    var post = await makePostForPostId(myLikedPosts[index].postID);
+    posts.push(post);
+  }
+  posts.sort((a, b) => b.date - a.date);
+
+  return posts;
+}
+
+async function getThePostsAUserSaved(userId) {
+  var mySavedPosts = await Bumps.find({ userID: userId }, { postID: 1 });
+
+  var posts = [];
+  for (let index = 0; index < mySavedPosts.length; index++) {
+    var post = await makePostForPostId(mySavedPosts[index].postID);
+    posts.push(post);
+  }
+  posts.sort((a, b) => b.date - a.date);
+
+  return posts;
+}
 
 export default {
   checkIfEmailExistsInUsers,
@@ -555,5 +610,9 @@ export default {
   removeShareFromAPost,
   removeSavedPostFromAPost,
   removePost,
-  //makePostForPostId,
+  makePostForPostId,
+  getThePostsOfAUser,
+  getThePostsAUserShared,
+  getThePostsAUserBumped,
+  getThePostsAUserSaved,
 };
