@@ -116,12 +116,12 @@ app.get('/myposts/:id', (req, res) => {
 });
 
 // logout
-app.get('/logout/:id',(req,res)=> {
+app.get('/logout/:id', (req, res) => {
   const { id } = req.params;
   DbApi.logOut(id).then((result) => {
     res.json(result);
-  } 
-)});
+  });
+});
 
 
 
