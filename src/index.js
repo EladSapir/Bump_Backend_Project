@@ -130,7 +130,7 @@ app.post('/createpost', async (req, res) => {
   const { picture } = req.body;
   const post = await DbApi.createPost(id, text, picture);
   if (post === false) {
-    res.send('failed');
+    res.send(false);
   }
   else {
     res.json({ postid: post._id });
