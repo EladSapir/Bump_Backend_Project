@@ -124,6 +124,63 @@ app.get('/logout/:id', (req, res) => {
 });
 
 
+// create post 
+app.post('/createpost', async (req, res) => {
+  const { id } = req.body;
+  const { text } = req.body;
+  const { picture } = req.body;
+  const post = await DbApi.createPost(id,text,picture)
+  if (post ==false) {
+    res.send('failed');
+  }
+  else {
+    res.json({ postid:post._id });
+  }
+});
+
+//edit post
+app.post('/editpost', async (req, res) => {
+  const { postid } = req.body;
+  const { txt } = req.body;
+  const result = await DbApi.editPost(postid,txt);
+  if (result ==false) {
+    res.send('false');
+  }
+  else {
+    res.send('true');
+  }
+});
+
+//add comment
+app.post('/addcomment',async (req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const { text } = req.body;
+  const result = await DbApi.addCommentToPost(post,user,text);
+  if (result) {
+    res.json({ commentid:result._id });
+  }
+  else {
+    res.send('false');
+  }
+})
+
+
+//delete comment 
+app.post('/removecomment',async (req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const { comment } = req.body;
+  const result = await DbApi.removeCommentFromAPost(user,post,comment);
+  if (result) {
+    console.log(`index res: ${result}`);
+    res.send('true');
+  }
+  else {
+    res.send('false');
+  }
+})
+
 
 
 // // get profile of a user

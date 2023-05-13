@@ -297,16 +297,17 @@ async function addBumpToPost(postid, userid) {
 //return the id of the post if the post was created,false if there was an error
 //if there is no picture receive null
 async function createPost(tuserid, ttext, tpicture) {
+  var pref;
   if (tpicture == null) {
     const newPost = new Posts({ userID: tuserid, text: ttext, picture: 'null' });
-    pref = await newPost.save().then((res) => { return res._id });
+    pref = await newPost.save();
   }
   else {
     const newPost = new Posts({ userID: tuserid, text: ttext, picture: tpicture });
-    pref = await newPost.save().then((res) => { return res._id });
+    pref = await newPost.save();
   }
   if (pref != null) {
-    return pref;
+    return pref._id;
   }
   return false;
 }
@@ -315,7 +316,7 @@ async function createPost(tuserid, ttext, tpicture) {
 //return true or false depending if the update happened or not
 //cant update picture
 async function editPost(tpostid, ttext) {
-  post = await Posts.updateOne({ _id: tpostid }, { text: ttext });
+  var post = await Posts.updateOne({ _id: tpostid }, { text: ttext });
   if (post == 0) {
     return false;
   }
@@ -327,10 +328,12 @@ async function editPost(tpostid, ttext) {
 //receive the id of the post the id of the user and the text
 //return true if the comment was added or false if not
 async function addCommentToPost(tpostid, tuserid, ttext) {
-  newcomment = new Comments({ postID: tpostid, userID: tuserid, text: ttext });
-  tcomment = await newcomment.save();
-  comment = await Posts.updateOne({ _id: tpostid }, { $push: { comments: tcomment._id } });
-  return comment.acknowledged;
+  var newcomment = new Comments({ postID: tpostid, userID: tuserid, text: ttext });
+  var tcomment = await newcomment.save();
+  var comment = await Posts.updateOne({ _id: tpostid }, { $push: { comments: tcomment._id } });
+  if(comment){
+    return tcomment._id;}
+  return false;
 }
 
 //edit comment that already exists
@@ -402,14 +405,21 @@ async function removeBumpFromAPost(userId, postId) {
 
 //remove specific comment from given post id
 async function removeCommentFromAPost(userId, postId, commentId) {
-  toDelete = await Comments.findOne({ _id: commentId, userID: userId, postID: postId });
-  if (toDelete) {
-    ans = await Posts.updateOne({ _id: postId }, { $pull: { comments: toDelete._id } });
-    await Comments.deleteOne({ _id: toDelete._id });
-    return ans.acknowledged;
+  var toDelete = await Comments.findOne({ _id: commentId , userID: userId, postID: postId});
+  console.log(`db find: ${toDelete}`);
+  if (toDelete === null) {
+    return false;
   }
   else
-    return false;
+  {
+    var ans1 = await Posts.updateOne({ _id: postId }, { $pull: { comments: commentId } });
+    var ans2 = await Comments.deleteOne({ _id: toDelete._id });
+    if(ans1.nModified >0 && ans2.deletedCount >0 ){
+      console.log(`db res: ${ans2.acknowledged}`);
+      return true;
+    }
+  }
+    
 }
 
 
@@ -499,6 +509,7 @@ async function makePostForPostId(postId) {
     var user1 = await User.findOne({ _id: comment.userID }, { GamerTag: 1, picture: 1 });
     var comment = {
       _id: comment._id,
+      userID:comment.userID,
       GamerTag: user1.GamerTag,
       Picture: user1.Picture,
       date: comment.createdAt,
