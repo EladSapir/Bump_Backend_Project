@@ -13,7 +13,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import DbApi from '../api/DbApi.js';
 
-//// ADD COMMENT AND BUMP , REMOVE COMMENT AND BUMP, !! FROM SHARES 
+// ADD COMMENT AND BUMP , REMOVE COMMENT AND BUMP, FROM SHARES
 const PORT = process.env.PORT || 5000;
 const app = express();
 const dbURI = 'mongodb+srv://bumpAdmin:bumpSCE12345@bumpdb.gr2nk3i.mongodb.net/BumpDB?retryWrites=true&w=majority';
@@ -22,7 +22,6 @@ mongoose.connect(dbURI)
     console.log('Connected to the DataBase successfully');
   })
   .catch((err) => console.log(err));
-
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -124,26 +123,26 @@ app.get('/logout/:id', (req, res) => {
 });
 
 
-// create post 
+// create post
 app.post('/createpost', async (req, res) => {
   const { id } = req.body;
   const { text } = req.body;
   const { picture } = req.body;
-  const post = await DbApi.createPost(id,text,picture)
-  if (post ==false) {
+  const post = await DbApi.createPost(id, text, picture);
+  if (post === false) {
     res.send('failed');
   }
   else {
-    res.json({ postid:post._id });
+    res.json({ postid: post._id });
   }
 });
 
-//edit post
+// edit post
 app.post('/editpost', async (req, res) => {
   const { postid } = req.body;
   const { txt } = req.body;
-  const result = await DbApi.editPost(postid,txt);
-  if (result ==false) {
+  const result = await DbApi.editPost(postid, txt);
+  if (result === false) {
     res.send('false');
   }
   else {
@@ -151,242 +150,132 @@ app.post('/editpost', async (req, res) => {
   }
 });
 
-//add comment
-app.post('/addcomment',async (req,res)=>{
+// add comment
+app.post('/addcomment', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
   const { text } = req.body;
-  const result = await DbApi.addCommentToPost(post,user,text);
+  const result = await DbApi.addCommentToPost(post, user, text);
   if (result) {
-    res.json({ commentid:result._id });
+    res.json({ commentid: result._id });
   }
   else {
     res.send('false');
   }
-})
+});
 
 
-//delete comment 
-app.post('/removecomment',async (req,res)=>{
+// delete comment
+app.post('/removecomment', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
   const { comment } = req.body;
-  const result = await DbApi.removeCommentFromAPost(user,post,comment);
+  const result = await DbApi.removeCommentFromAPost(user, post, comment);
   if (result) {
     res.send('true');
   }
   else {
     res.send('false');
   }
-})
+});
 
-//bump Post
-app.post('/addbump',async (req,res)=>{
+// bump Post
+app.post('/addbump', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
-  const result = await DbApi.addBumpToPost(post,user);
+  const result = await DbApi.addBumpToPost(post, user);
   if (result) {
     res.send('true');
   }
   else {
     res.send('false');
   }
-})
+});
 
-//remove bump
-app.post('/removebump',async (req,res)=>{
+// remove bump
+app.post('/removebump', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
-  const result = await DbApi.removeBumpFromAPost(user,post);
+  const result = await DbApi.removeBumpFromAPost(user, post);
   if (result) {
     res.send('true');
   }
   else {
     res.send('false');
   }
-})
+});
 
-//save post
-app.post('/savepost',async(req,res)=>{
+// save post
+app.post('/savepost', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
-  const result = await DbApi.addSaveToPost(post,user);
+  const result = await DbApi.addSaveToPost(post, user);
   if (result) {
     res.send('true');
   }
   else {
     res.send('false');
   }
-}
-)
+});
 
 
-//remove save
-app.post('/removesaved',async(req,res)=>{
+// remove save
+app.post('/removesaved', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
-  const result = await DbApi.removeSavedPostFromAPost(user,post);
+  const result = await DbApi.removeSavedPostFromAPost(user, post);
   if (result) {
     res.send('true');
   }
   else {
     res.send('false');
   }
-}
-)
+});
 
 
 // share post
-app.post('/sharepost',async(req,res)=>{
+app.post('/sharepost', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
-  const result = await DbApi.addShareToPost(post,user);
+  const result = await DbApi.addShareToPost(post, user);
   if (result) {
     res.send('true');
   }
   else {
     res.send('false');
   }
-}
-)
+});
 
 // remove share
-app.post('/removeshare',async(req,res)=>{
+app.post('/removeshare', async (req, res) => {
   const { post } = req.body;
   const { user } = req.body;
   const { share } = req.body;
-  const result = await DbApi.removeShareFromAPost(user,post,share);
+  const result = await DbApi.removeShareFromAPost(user, post, share);
   if (result) {
     res.send('true');
   }
   else {
     res.send('false');
   }
-}
-)
+});
 
 // remove post
-app.post('/removepost',async(req,res)=>{
+app.post('/removepost', async (req, res) => {
   const { post } = req.body;
   const result = await DbApi.removePost(post);
   res.send('true');
-}
-)
+});
 
-// // get profile of a user
-// app.get('/users/:id/profile', (req, res) => {
-// });
-
-// // get matching search page by user
-// app.get('/users/:id/matching', (req, res) => {
-// });
-
-
-
-
-// // get all users the user is following
-// app.get('/users/:id/following', (req, res) => {
-// });
-
-// // get all users that are following the user
-// app.get('/users/:id/followers', (req, res) => {
-// });
-
-// // get all users by game
-// app.get('/users/:game', (req, res) => {
-// });
-
-// // get user by id
-// app.get('/users/:id', (req, res) => {
-// });
-
-// // update user by id
-// app.put('/users/:id', (req, res) => {
-// });
-
-// // delete user by id
-// app.delete('/users/:id', (req, res) => {
-// });
-
-// // get user by gamer tag
-// app.get('/users/:gamerTag', (req, res) => {
-// });
-
-// // get all posts by user
-// app.get('/users/:id/posts', (req, res) => {
-// });
-
-// // get amount of all comments by user
-// app.get('/users/:id/comments', (req, res) => {
-// });
-
-// // get all posts liked by user
-// app.get('/posts/:id/liked', (req, res) => {
-// });
-
-// // get all posts saved by user
-// app.get('/posts/:id/saved', (req, res) => {
-// });
-
-// // get all posts shared by user
-// app.get('/posts/:id/shared', (req, res) => {
-// });
-
-
-
-
-// // create post
-// app.post('/posts', (req, res) => {
-// });
-
-// // update post by id
-// app.put('/posts/:id', (req, res) => {
-// });
-
-// // delete post by id
-// app.delete('/posts/:id', (req, res) => {
-// });
-
-
-
-
-// // get all comments by post id
-// app.get('/comments/:id', (req, res) => {
-// });
-
-// // get comment by id
-// app.get('/comments/:id', (req, res) => {
-// });
-
-// // create comment
-// app.post('/comments', (req, res) => {
-// });
-
-// // delete comment by id
-// app.delete('/comments/:id', (req, res) => {
-// });
-
-
-
-
-// // get all bumps of a post by id
-// app.get('/bumps/:id', (req, res) => {
-// });
-
-// // create bump
-// app.post('/bump', (req, res) => {
-// });
-
-// // delete bump by id
-// app.delete('/bump/:id', (req, res) => {
-// });
-
-
-
-
-
-
-
+// const routes = [];
+// for (const layer of app._router.stack) {
+//   if (layer.route) {
+//     const path = layer.route.path;
+//     const methods = Object.keys(layer.route.methods).join(', ');
+//     routes.push({ path, methods });
+//   }
+// }
+// console.log(routes);
 
 app.listen(PORT, () => {
   console.log(`Server has started on port: ${PORT}`);
