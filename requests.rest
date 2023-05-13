@@ -63,7 +63,7 @@ Content-Type: application/json
 {
     "post":"645f63404c6715ceb174be88",
     "user":"645d006e69d2485922083738",
-    "text":"123123123123"
+    "text":"LALALALALLA"
 }
 
 #########
@@ -74,5 +74,73 @@ Content-Type: application/json
 {
     "post":"645f63404c6715ceb174be88",
     "user":"645d006e69d2485922083738",
-    "comment":"645f73a3a6e3efe0b9c6963c"
+    "comment":"645f836709364bf827d5b77f"
+}
+
+#########
+
+POST http://localhost:5000/addbump
+Content-Type: application/json
+
+{
+    "post":"645f63404c6715ceb174be88",
+    "user":"64524121806a7b42422e4fa2"
+}
+
+#########
+
+POST http://localhost:5000/removebump
+Content-Type: application/json
+
+{
+    "post":"645f63404c6715ceb174be88",
+    "user":"64524121806a7b42422e4fa2"
+}
+
+
+#########
+
+POST http://localhost:5000/savepost
+Content-Type: application/json
+
+{
+    "post":"645f63404c6715ceb174be88",
+    "user":"64524121806a7b42422e4fa2"
+}
+
+#########
+POST http://localhost:5000/removesaved
+Content-Type: application/json
+
+{
+    "post":"645f63404c6715ceb174be88",
+    "user":"64524121806a7b42422e4fa2"
+}
+
+#########
+POST http://localhost:5000/sharepost
+Content-Type: application/json
+
+{
+    "post":"645f63404c6715ceb174be88",
+    "user":"64524121806a7b42422e4fa2"
+}
+
+#########
+POST http://localhost:5000/removeshare
+Content-Type: application/json
+
+{
+    "post":"645f63404c6715ceb174be88",
+    "user":"64524121806a7b42422e4fa2",
+    "share":"645f89d9e46673a4ba5f1011"
+}
+
+##########
+
+POST http://localhost:5000/removepost
+Content-Type: application/json
+
+{
+    "post":"645f63404c6715ceb174be88"
 }

@@ -340,7 +340,7 @@ async function addCommentToPost(tpostid, tuserid, ttext) {
 //receive the id of the comment, and the new text
 //return true if the comment was edited or false if not
 async function editComment(tcommentid, ttext) {
-  comment = await Comments.updateOne({ _id: tcommentid }, { text: ttext });
+  var comment = await Comments.updateOne({ _id: tcommentid }, { text: ttext });
   if (comment == 0) {
     return false;
   }
@@ -351,8 +351,8 @@ async function editComment(tcommentid, ttext) {
 //receive the id of the post the id of the user
 //return true if the post was saved and false if not
 async function addSaveToPost(tpostid, tuserid) {
-  newsavepost = new SavedPosts({ postID: tpostid, userID: tuserid });
-  tnewsavepost = await newsavepost.save();
+  var newsavepost = new SavedPosts({ postID: tpostid, userID: tuserid });
+  var tnewsavepost = await newsavepost.save();
   if (tnewsavepost) {
     return true;
   }
@@ -362,10 +362,10 @@ async function addSaveToPost(tpostid, tuserid) {
 //create a new share post and return if the shares was created
 //receive post id and user id
 async function addShareToPost(tpostid, tuserid) {
-  newshare = new Shares({ postID: tpostid, userID: tuserid });
-  tshare = await newshare.save();
-  share = await Posts.updateOne({ _id: tpostid }, { $push: { shares: tshare._id } });
-  return share.acknowledged;
+  var newshare = new Shares({ postID: tpostid, userID: tuserid});
+  var tshare = await newshare.save();
+  var share = await Posts.updateOne({ _id: tpostid }, { $push: { shares: tshare._id } });
+  return true
 }
 
 
@@ -373,8 +373,8 @@ async function addShareToPost(tpostid, tuserid) {
 //The userID is the user that is following the other user and the follows is the user that is being followed.
 //The function returns true if the addition is successful, and false if it is not.
 async function addAFollowerToId(userID, follows) {
-  newfollow = new Follows({ userID1: userID, userID2: follows });
-  tnewfollow = await newfollow.save();
+  var newfollow = new Follows({ userID1: userID, userID2: follows });
+  var tnewfollow = await newfollow.save();
   if (tnewfollow)
     return tnewfollow._id;
   else
@@ -385,16 +385,16 @@ async function addAFollowerToId(userID, follows) {
 // Deletes the 'follows from following the 'userID'.
 // The function returns the number of followers that were deleted.
 async function removeAFollowerFromId(userID, follows) {
-  ans = await Follows.deleteOne({ userID1: userID, userID2: follows });
+  var ans = await Follows.deleteOne({ userID1: userID, userID2: follows });
   return ans.deletedCount;
 }
 
 // remove a given bump from a given post id 
 async function removeBumpFromAPost(userId, postId) {
-  toDelete = await Bumps.findOne({ userID: userId, postID: postId });
+  var toDelete = await Bumps.findOne({ userID: userId, postID: postId });
 
   if (toDelete) {
-    ans = await Posts.updateOne({ _id: postId }, { $pull: { bumps: toDelete._id } });
+    var ans = await Posts.updateOne({ _id: postId }, { $pull: { bumps: toDelete._id } });
     await Bumps.deleteOne({ _id: toDelete._id });
 
     return ans.acknowledged;
@@ -406,18 +406,14 @@ async function removeBumpFromAPost(userId, postId) {
 //remove specific comment from given post id
 async function removeCommentFromAPost(userId, postId, commentId) {
   var toDelete = await Comments.findOne({ _id: commentId , userID: userId, postID: postId});
-  console.log(`db find: ${toDelete}`);
   if (toDelete === null) {
     return false;
   }
   else
   {
-    var ans1 = await Posts.updateOne({ _id: postId }, { $pull: { comments: commentId } });
-    var ans2 = await Comments.deleteOne({ _id: toDelete._id });
-    if(ans1.nModified >0 && ans2.deletedCount >0 ){
-      console.log(`db res: ${ans2.acknowledged}`);
-      return true;
-    }
+    await Posts.updateOne({ _id: postId }, { $pull: { comments: commentId } });
+    await Comments.deleteOne({ _id: toDelete._id });
+    return true;
   }
     
 }
@@ -425,11 +421,11 @@ async function removeCommentFromAPost(userId, postId, commentId) {
 
 //remove specific share from given post id
 async function removeShareFromAPost(userId, postId, sharedId) {
-  toDelete = await Shares.findOne({ _id: sharedId, userID: userId, postID: postId });
+  var toDelete = await Shares.findOne({ _id: sharedId, userID: userId, postID: postId });
   if (toDelete) {
-    ans = await Posts.updateOne({ _id: postId }, { $pull: { shares: toDelete._id } });
+    var ans = await Posts.updateOne({ _id: postId }, { $pull: { shares: toDelete._id } });
     await Shares.deleteOne({ _id: toDelete._id });
-    return ans.acknowledged;
+    return true;
   }
   else
     return false;
@@ -437,10 +433,10 @@ async function removeShareFromAPost(userId, postId, sharedId) {
 
 //remove specific comment from given post id
 async function removeSavedPostFromAPost(userId, postId) {
-  toDelete = await SavedPosts.findOne({ userID: userId, postID: postId });
+  var toDelete = await SavedPosts.findOne({ userID: userId, postID: postId });
   if (toDelete) {
     await SavedPosts.deleteOne({ _id: toDelete._id });
-    return ans.acknowledged;
+    return true;
   }
   else
     return false;
@@ -448,11 +444,11 @@ async function removeSavedPostFromAPost(userId, postId) {
 
 //remove a post by id
 async function removePost(postId) {
-  postToDel = await Posts.deleteOne({ _id: postId });
-  bumpsToDel = await Bumps.deleteMany({ postID: postId });
-  commentsToDel = await Comments.deleteMany({ postID: postId });
-  sharesToDel = await Shares.deleteMany({ postID: postId });
-  savedToDel = await SavedPosts.deleteMany({ postID: postId });
+  await Posts.deleteOne({ _id: postId });
+  await Bumps.deleteMany({ postID: postId });
+  await Comments.deleteMany({ postID: postId });
+  await Shares.deleteMany({ postID: postId });
+  await SavedPosts.deleteMany({ postID: postId });
   return true;
 }
 
@@ -480,26 +476,20 @@ async function removeUser(userId) {
 
 //builds an object of a post by a post id 
 //with all that is needed for the post
-async function makePostForPostId(postId) {
+async function makePostForPostId(postId,userIDToCheck) {
   var post = await Posts.findOne({ _id: postId });
   var user = await User.findOne({ _id: post.userID });
 
-  var ifUserBumped = await Bumps.findOne({ userID: user._id, postID: post._id });
+  var ifUserBumped = await Bumps.findOne({ userID: userIDToCheck, postID: post._id });
   var hasUserBumped = false;
   if (ifUserBumped !== null) {
     hasUserBumped = true;
   }
 
-  var ifUserSaved = await SavedPosts.findOne({ userID: user._id, postID: post._id });
+  var ifUserSaved = await SavedPosts.findOne({ userID: userIDToCheck, postID: post._id });
   var hasUserSaved = false;
   if (ifUserSaved !== null) {
     hasUserSaved = true;
-  }
-
-  var ifUserShared = await Shares.findOne({ userID: user._id, postID: post._id });
-  var hasUserShared = false;
-  if (ifUserShared !== null) {
-    hasUserShared = true;
   }
 
   var commentsByPostId = await Comments.find({ postID: post._id });
@@ -531,7 +521,6 @@ async function makePostForPostId(postId) {
     numofshares: post.shares.length,
     hasUserBumped: hasUserBumped,
     hasUserSaved: hasUserSaved,
-    hasUserShared: hasUserShared,
     comments:comments,
     isShared: false,
   }
@@ -540,10 +529,9 @@ async function makePostForPostId(postId) {
 //gets all the posts of a user and sorts them by date.
 async function getThePostsOfAUser(userId) {
   var myPosts = await Posts.find({ userID: userId },{_id:1});
-
   var posts = [];
   for (let index = 0; index < myPosts.length; index++) {
-    var post = await makePostForPostId(myPosts[index]._id);
+    var post = await makePostForPostId(myPosts[index]._id,userId);
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
@@ -557,7 +545,7 @@ async function getThePostsAUserShared(userId) {
 
   var posts = [];
   for (let index = 0; index < mySharedPosts.length; index++) {
-    var post = await makePostForPostId(mySharedPosts[index].postID);
+    var post = await makePostForPostId(mySharedPosts[index].postID,userId);
     post.isShared = true;
     posts.push(post);
   }
@@ -572,7 +560,7 @@ async function getThePostsAUserBumped(userId) {
 
   var posts = [];
   for (let index = 0; index < myLikedPosts.length; index++) {
-    var post = await makePostForPostId(myLikedPosts[index].postID);
+    var post = await makePostForPostId(myLikedPosts[index].postID,userId);
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
@@ -586,7 +574,7 @@ async function getThePostsAUserSaved(userId) {
 
   var posts = [];
   for (let index = 0; index < mySavedPosts.length; index++) {
-    var post = await makePostForPostId(mySavedPosts[index].postID);
+    var post = await makePostForPostId(mySavedPosts[index].postID,userId);
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);

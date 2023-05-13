@@ -13,7 +13,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import DbApi from '../api/DbApi.js';
 
-
+//// ADD COMMENT AND BUMP , REMOVE COMMENT AND BUMP, !! FROM SHARES 
 const PORT = process.env.PORT || 5000;
 const app = express();
 const dbURI = 'mongodb+srv://bumpAdmin:bumpSCE12345@bumpdb.gr2nk3i.mongodb.net/BumpDB?retryWrites=true&w=majority';
@@ -173,7 +173,6 @@ app.post('/removecomment',async (req,res)=>{
   const { comment } = req.body;
   const result = await DbApi.removeCommentFromAPost(user,post,comment);
   if (result) {
-    console.log(`index res: ${result}`);
     res.send('true');
   }
   else {
@@ -181,7 +180,98 @@ app.post('/removecomment',async (req,res)=>{
   }
 })
 
+//bump Post
+app.post('/addbump',async (req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const result = await DbApi.addBumpToPost(post,user);
+  if (result) {
+    res.send('true');
+  }
+  else {
+    res.send('false');
+  }
+})
 
+//remove bump
+app.post('/removebump',async (req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const result = await DbApi.removeBumpFromAPost(user,post);
+  if (result) {
+    res.send('true');
+  }
+  else {
+    res.send('false');
+  }
+})
+
+//save post
+app.post('/savepost',async(req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const result = await DbApi.addSaveToPost(post,user);
+  if (result) {
+    res.send('true');
+  }
+  else {
+    res.send('false');
+  }
+}
+)
+
+
+//remove save
+app.post('/removesaved',async(req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const result = await DbApi.removeSavedPostFromAPost(user,post);
+  if (result) {
+    res.send('true');
+  }
+  else {
+    res.send('false');
+  }
+}
+)
+
+
+// share post
+app.post('/sharepost',async(req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const result = await DbApi.addShareToPost(post,user);
+  if (result) {
+    res.send('true');
+  }
+  else {
+    res.send('false');
+  }
+}
+)
+
+// remove share
+app.post('/removeshare',async(req,res)=>{
+  const { post } = req.body;
+  const { user } = req.body;
+  const { share } = req.body;
+  const result = await DbApi.removeShareFromAPost(user,post,share);
+  if (result) {
+    res.send('true');
+  }
+  else {
+    res.send('false');
+  }
+}
+)
+
+// remove post
+app.post('/removepost',async(req,res)=>{
+  const { post } = req.body;
+  const result = await DbApi.removePost(post);
+  res.send('true');
+}
+)
 
 // // get profile of a user
 // app.get('/users/:id/profile', (req, res) => {
