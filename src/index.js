@@ -185,10 +185,10 @@ app.post('/addbump', async (req, res) => {
   const { user } = req.body;
   const result = await DbApi.addBumpToPost(post, user);
   if (result) {
-    res.send('true');
+    res.send(true);
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
