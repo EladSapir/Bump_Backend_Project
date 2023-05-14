@@ -606,6 +606,15 @@ async function logOut(userId){
   return false;
 }
 
+async function getUserDetails(userId){
+  var details = await User.findOne({_id:userId},{GamerTag:1,Picture:1});
+  if(details)
+  {
+  return details
+  }
+  return false;
+}
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -644,4 +653,5 @@ export default {
   getThePostsAUserBumped,
   getThePostsAUserSaved,
   logOut,
+  getUserDetails,
 };

@@ -88,11 +88,9 @@ app.post('/login', async (req, res) => {
 // get homepage of a user
 app.get('/homepage/:id', async (req, res) => {
   const { id } = req.params;
-
   let posts = [];
-
   const following = await DbApi.whoIDFollows(id);
-
+  const details = await DbApi.getUserDetails(id);
   for (let i = 0; i < following.length; i++) {
     posts = posts.concat(await DbApi.getThePostsAUserShared(following[i]._id));
     posts = posts.concat(await DbApi.getThePostsOfAUser(following[i]._id));
@@ -102,7 +100,7 @@ app.get('/homepage/:id', async (req, res) => {
 
   posts.sort((a, b) => b.date - a.date);
 
-  res.json(posts);
+  res.json({ posts, gamertag: details.GamerTag, picture: details.Picture });
 });
 
 
