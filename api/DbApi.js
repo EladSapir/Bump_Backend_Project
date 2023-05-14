@@ -496,7 +496,7 @@ async function makePostForPostId(postId,userIDToCheck) {
   var comments = [];
   for (let index = 0; index < commentsByPostId.length; index++) {
     var comment = commentsByPostId[index];
-    var user1 = await User.findOne({ _id: comment.userID }, { GamerTag: 1, picture: 1 });
+    var user1 = await User.findOne({ _id: comment.userID }, { GamerTag: 1, Picture: 1 });
     var comment = {
       _id: comment._id,
       userID:comment.userID,
