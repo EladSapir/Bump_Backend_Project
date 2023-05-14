@@ -172,10 +172,10 @@ app.post('/removecomment', async (req, res) => {
   const { comment } = req.body;
   const result = await DbApi.removeCommentFromAPost(user, post, comment);
   if (result) {
-    res.send('true');
+    res.send(true);
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
@@ -198,10 +198,10 @@ app.post('/removebump', async (req, res) => {
   const { user } = req.body;
   const result = await DbApi.removeBumpFromAPost(user, post);
   if (result) {
-    res.send('true');
+    res.send(true);
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
@@ -211,10 +211,10 @@ app.post('/savepost', async (req, res) => {
   const { user } = req.body;
   const result = await DbApi.addSaveToPost(post, user);
   if (result) {
-    res.send('true');
+    res.send(true);
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
@@ -225,10 +225,10 @@ app.post('/removesaved', async (req, res) => {
   const { user } = req.body;
   const result = await DbApi.removeSavedPostFromAPost(user, post);
   if (result) {
-    res.send('true');
+    res.send(true);
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
@@ -239,10 +239,10 @@ app.post('/sharepost', async (req, res) => {
   const { user } = req.body;
   const result = await DbApi.addShareToPost(post, user);
   if (result) {
-    res.send('true');
+    res.send(true);
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
@@ -253,10 +253,10 @@ app.post('/removeshare', async (req, res) => {
   const { share } = req.body;
   const result = await DbApi.removeShareFromAPost(user, post, share);
   if (result) {
-    res.send('true');
+    res.send(true);
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
@@ -264,7 +264,7 @@ app.post('/removeshare', async (req, res) => {
 app.post('/removepost', async (req, res) => {
   const { post } = req.body;
   const result = await DbApi.removePost(post);
-  res.send('true');
+  res.send(true);
 });
 
 // const routes = [];
