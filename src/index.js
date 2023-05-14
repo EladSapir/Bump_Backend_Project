@@ -160,7 +160,7 @@ app.post('/addcomment', async (req, res) => {
     res.json({ commentid: result._id });
   }
   else {
-    res.send('false');
+    res.send(false);
   }
 });
 
