@@ -555,7 +555,7 @@ async function getThePostsAUserShared(userId) {
     var user = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
     post.SGamerTag = user.GamerTag;
     post.Spicture = user.Picture;
-    post.Sdate = post.createdAt;
+    post.Sdate = mySharedPosts[index].createdAt;
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
