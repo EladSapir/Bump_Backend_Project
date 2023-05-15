@@ -525,6 +525,7 @@ async function makePostForPostId(postId,userIDToCheck) {
     hasUserSaved: hasUserSaved,
     comments:comments,
     isShared: false,
+    Sid: "",
     SGamerTag: "",
     Spicture: "",
     Sdate: ""
@@ -546,13 +547,14 @@ async function getThePostsOfAUser(userId) {
 
 //gets all the posts that a user has shared and returns them in a list.
 async function getThePostsAUserShared(userId) {
-  var mySharedPosts = await Shares.find({ userID: userId }, { postID: 1 });
+  var mySharedPosts = await Shares.find({ userID: userId });
 
   var posts = [];
   for (let index = 0; index < mySharedPosts.length; index++) {
     var post = await makePostForPostId(mySharedPosts[index].postID,userId);
     post.isShared = true;
     var user = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
+    post.Sid = mySharedPosts[index]._id;
     post.SGamerTag = user.GamerTag;
     post.Spicture = user.Picture;
     post.Sdate = mySharedPosts[index].createdAt;
