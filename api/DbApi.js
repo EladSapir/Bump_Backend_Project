@@ -515,7 +515,7 @@ async function makePostForPostId(postId,userIDToCheck) {
     _id: post._id,
     userID: user._id,
     GamerTag: user.GamerTag,
-    userProfilePicture: user.picture,
+    userProfilePicture: user.Picture,
     date: post.createdAt,
     text: post.text,
     picture: post.picture,
