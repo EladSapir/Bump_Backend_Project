@@ -275,6 +275,71 @@ app.post('/removepost', async (req, res) => {
 // }
 // console.log(routes);
 
+// add comment to shared post
+app.post('/addcommenttoshare', async (req, res) => {
+  const { post } = req.body;
+  const { user } = req.body;
+  const { text } = req.body;
+  const result = await DbApi.addCommentToASharedPost(post, user, text);
+  if (result) {
+    res.json({ commentid: result._id });
+  }
+  else {
+    res.send(false);
+  }
+});
+
+
+// delete comment from shared post
+app.post('/removecommentfromshare', async (req, res) => {
+  const { post } = req.body;
+  const { user } = req.body;
+  const { comment } = req.body;
+  const result = await DbApi.removeCommentFromASharedPost(user, post, comment);
+  if (result) {
+    res.send(true);
+  }
+  else {
+    res.send(false);
+  }
+});
+
+// bump Post from shared post
+app.post('/addbumptoshare', async (req, res) => {
+  const { post } = req.body;
+  const { user } = req.body;
+  const result = await DbApi.addBumpToSharedPost(post, user);
+  if (result) {
+    res.send(true);
+  }
+  else {
+    res.send(false);
+  }
+});
+
+// remove bump from shared post
+app.post('/removebumpfromshare', async (req, res) => {
+  const { post } = req.body;
+  const { user } = req.body;
+  const result = await DbApi.removeBumpFromASharedPost(user, post);
+  if (result) {
+    res.send(true);
+  }
+  else {
+    res.send(false);
+  }
+});
+
+// const routes = [];
+// for (const layer of app._router.stack) {
+//   if (layer.route) {
+//     const { path } = layer.route;
+//     const methods = Object.keys(layer.route.methods).join(', ');
+//     routes.push({ path, methods });
+//   }
+// }
+// console.log(routes);
+
 app.listen(PORT, () => {
   console.log(`Server has started on port: ${PORT}`);
 });

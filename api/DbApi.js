@@ -424,6 +424,8 @@ async function removeShareFromAPost(userId, postId, sharedId) {
   var toDelete = await Shares.findOne({ _id: sharedId, userID: userId, postID: postId });
   if (toDelete) {
     var ans = await Posts.updateOne({ _id: postId }, { $pull: { shares: toDelete._id } });
+    await Bumps.deleteMany({ postID: sharedId });
+    await Comments.deleteMany({ postID: sharedId });
     await Shares.deleteOne({ _id: toDelete._id });
     return true;
   }
@@ -523,6 +525,9 @@ async function makePostForPostId(postId,userIDToCheck) {
     hasUserSaved: hasUserSaved,
     comments:comments,
     isShared: false,
+    SGamerTag: "",
+    Spicture: "",
+    Sdate: ""
   }
 }
 
@@ -547,6 +552,10 @@ async function getThePostsAUserShared(userId) {
   for (let index = 0; index < mySharedPosts.length; index++) {
     var post = await makePostForPostId(mySharedPosts[index].postID,userId);
     post.isShared = true;
+    var user = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
+    post.SGamerTag = user.GamerTag;
+    post.Spicture = user.Picture;
+    post.Sdate = mySharedPosts[index].createdAt;
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
@@ -582,14 +591,8 @@ async function getThePostsAUserSaved(userId) {
   return posts;
 }
 
-// //logout 
-// async function logOut(userId){
-//   var time= await LoggedIn.find({userID:userId},{_id:1,timeLoggedIn:1});
-//   var allTime = await User.find({userID:userId},{timeLoggedIn:1});
-  
-//   await User.updateOne({_id:userId},{timeLoggedIn:})
-// }
 
+// this function logs out the user and calculates the time he was logged in (in seconds)
 async function logOut(userId){
   const logInData = await LoggedIn.findOne({userID: userId},{createdAt: 1});
   const timeLoggedIn = logInData.createdAt;
@@ -606,6 +609,7 @@ async function logOut(userId){
   return false;
 }
 
+// returns the gamer tag and picture of a userid 
 async function getUserDetails(userId){
   var details = await User.findOne({_id:userId},{GamerTag:1,Picture:1});
   if(details)
@@ -613,6 +617,57 @@ async function getUserDetails(userId){
   return details
   }
   return false;
+}
+
+// Add a comment to a shared post
+async function addCommentToASharedPost(tpostid, tuserid, ttext) {
+  var newcomment = new Comments({ postID: tpostid, userID: tuserid, text: ttext });
+  var tcomment = await newcomment.save();
+  var comment = await Shares.updateOne({ _id: tpostid }, { $push: { Scomments: tcomment._id } });
+  if(comment){
+    return tcomment._id;}
+  return false;
+}
+
+//remove specific comment from given share id
+async function removeCommentFromASharedPost(userId, postId, commentId) {
+  var toDelete = await Comments.findOne({ _id: commentId , userID: userId, postID: postId});
+  if (toDelete === null) {
+    return false;
+  }
+  else
+  {
+    await Shares.updateOne({ _id: postId }, { $pull: { Scomments: commentId } });
+    await Comments.deleteOne({ _id: toDelete._id });
+    return true;
+  }
+    
+}
+
+// add bump to a given shared post (id)
+async function addBumpToSharedPost(postid, userid) {
+  var bool = await didIdAlreadyBumpedPost(userid, postid);
+  if (bool == false) {
+    var newbump = new Bumps({ postID: postid, userID: userid });
+    var bump = await newbump.save();
+    await Shares.updateOne({ _id: postid }, { $push: { Sbumps: bump._id } })
+    return true;
+  }
+  return false;
+}
+
+// remove a given bump from a given shared post id 
+async function removeBumpFromASharedPost(userId, postId) {
+  var toDelete = await Bumps.findOne({ userID: userId, postID: postId });
+
+  if (toDelete) {
+    var ans = await Shares.updateOne({ _id: postId }, { $pull: { Sbumps: toDelete._id } });
+    await Bumps.deleteOne({ _id: toDelete._id });
+
+    return ans.acknowledged;
+  }
+  else
+    return false;
 }
 
 export default {
@@ -654,4 +709,8 @@ export default {
   getThePostsAUserSaved,
   logOut,
   getUserDetails,
+  addCommentToASharedPost,
+  removeCommentFromASharedPost,
+  addBumpToSharedPost,
+  removeBumpFromASharedPost
 };
