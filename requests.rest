@@ -32,7 +32,7 @@ Content-Type:  application/json
 }
 
 ########
-GET http://localhost:5000/homepage/64524121806a7b42422e4fa3
+GET http://localhost:5000/homepage/64524121806a7b42422e4fa1
 
 ########
 GET http://localhost:5000/logout/645d00de69d2485922083746
@@ -122,7 +122,7 @@ POST http://localhost:5000/sharepost
 Content-Type: application/json
 
 {
-    "post":"6460b9a38f3f6d36deb0b2e9",
+    "post":"6460db10994d92d1dfa373ac",
     "user":"64524121806a7b42422e4fa2"
 }
 
@@ -150,7 +150,7 @@ POST http://localhost:5000/addcommenttoshare
 Content-Type: application/json
 
 {
-    "post":"646232de79fee60a6316c17c",
+    "post":"646242a8bf21d2c2da4c9d63",
     "user":"64524121806a7b42422e4fa2",
     "text":"EladTomer"
 }
@@ -170,7 +170,7 @@ POST http://localhost:5000/addbumptoshare
 Content-Type: application/json
 
 {
-    "post":"646232de79fee60a6316c17c",
+    "post":"646242a8bf21d2c2da4c9d63",
     "user":"64524121806a7b42422e4fa2"
 }
 
