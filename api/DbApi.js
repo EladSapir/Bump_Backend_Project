@@ -590,13 +590,38 @@ async function getThePostsAUserShared(userId) {
 
   var posts = [];
   for (let index = 0; index < mySharedPosts.length; index++) {
+    var ifUserBumped = await Bumps.findOne({ userID: userId, postID: mySharedPosts[index]._id });
+    var hasUserBumped = false;
+    if (ifUserBumped !== null) {
+      hasUserBumped = true;
+    }
     var post = await makePostForPostId(mySharedPosts[index].postID,userId);
     post.isShared = true;
+    post.hasUserBumped=hasUserBumped;
+
+    var commentsByPostId = await Comments.find({ postID: mySharedPosts[index]._id });
+    var comments = [];
+    for (let index = 0; index < commentsByPostId.length; index++) {
+    var comment = commentsByPostId[index];
+    var user1 = await User.findOne({ _id: comment.userID }, { GamerTag: 1, Picture: 1 });
+    var comment = {
+      _id: comment._id,
+      userID:comment.userID,
+      GamerTag: user1.GamerTag,
+      Picture: user1.Picture,
+      date: comment.createdAt,
+      text: comment.text,
+    }
+    comments.push(comment);
+    }
+    comments.sort((a, b) => b.date - a.date);
+    post.comments=comments;
     var user = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
     post.Sid = mySharedPosts[index]._id;
     post.SGamerTag = user.GamerTag;
     post.Spicture = user.Picture;
     post.Sdate = mySharedPosts[index].createdAt;
+    post.numOfBumps=mySharedPosts[index].Sbumps.length;
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
