@@ -368,6 +368,18 @@ app.get('/profile/stats/:id', async (req, res) => {
   });
 });
 
+app.get('/removeuser/:id', async (req, res) => {
+  const { id } = req.params;
+  const checkansw = await DbApi.removeUser(id);
+  if (checkansw)
+  {
+    res.send(true);
+  }
+  else
+  {
+    res.send(false);
+  }
+});
 
 // const routes = [];
 // for (const layer of app._router.stack) {

@@ -15,8 +15,8 @@ POST http://localhost:5000/register
 Content-Type:  application/json
 
 {
-    "email":"elad12345@example.com",
-    "gamertag":"elad12345",
+    "email":"eladdddddddddd@example.com",
+    "gamertag":"eladdddd12412",
     "password":"password12",
     "gender":"male",
     "dob":"1994-12-24T00:00:00.000Z",
@@ -42,7 +42,7 @@ POST http://localhost:5000/createpost/
 Content-Type: application/json
 
 {
-    "id":"645d006e69d2485922083738",
+    "id":"64639a7496a66c22e46e4bb5",
     "text":"LALALALALALALA",
     "picture":" "
 }
@@ -61,8 +61,8 @@ POST http://localhost:5000/addcomment
 Content-Type: application/json
 
 {
-    "post":"645f63404c6715ceb174be88",
-    "user":"645d006e69d2485922083738",
+    "post":"646396b94ae18be576ce82d5",
+    "user":"64639a7496a66c22e46e4bb5",
     "text":"LALALALALLA"
 }
 
@@ -83,8 +83,8 @@ POST http://localhost:5000/addbump
 Content-Type: application/json
 
 {
-    "post":"645f63404c6715ceb174be88",
-    "user":"64524121806a7b42422e4fa2"
+    "post":"646396b94ae18be576ce82d5",
+    "user":"64639a7496a66c22e46e4bb5"
 }
 
 #########
@@ -104,8 +104,8 @@ POST http://localhost:5000/savepost
 Content-Type: application/json
 
 {
-    "post":"645f63404c6715ceb174be88",
-    "user":"64524121806a7b42422e4fa2"
+    "post":"646396b94ae18be576ce82d5",
+    "user":"64639a7496a66c22e46e4bb5"
 }
 
 #########
@@ -122,8 +122,8 @@ POST http://localhost:5000/sharepost
 Content-Type: application/json
 
 {
-    "post":"6460db10994d92d1dfa373ac",
-    "user":"64524121806a7b42422e4fa2"
+    "post":"646396b94ae18be576ce82d5",
+    "user":"64639a7496a66c22e46e4bb5"
 }
 
 #########
@@ -191,3 +191,10 @@ GET http://localhost:5000/profile/saved/64524121806a7b42422e4fa1
 
 ###
 GET http://localhost:5000/profile/bumped/64524121806a7b42422e4fa1
+
+###
+GET http://localhost:5000/profile/stats/64524121806a7b42422e4fa1
+
+
+###
+ GET http://localhost:5000/removeuser/64639a7496a66c22e46e4bb5

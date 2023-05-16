@@ -471,23 +471,47 @@ async function removePost(postId) {
 
 ////change to deleteOne ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3times ~~~~~~~~~~~~~~~~~~~~~~ !!!!!!!!!!!!!!!!!!!!!!
 async function removeUser(userId) {
-  userToDel = await User.findOne({ _id: userId });
-  for (let index = 0; index < userToDel.Bumps.length; index++) {
-    bump = await Bumps.findOne({ _id: userToDel.Bumps[index] })
-    //console.log(`bump: ${bump}`);
-    //change to deleteOne
+  var posts= [];
+  posts=posts.concat(await Posts.find({userID:userId}));
+  for(let index=0;index<posts.length;index++)
+  {
+    await removePost(posts[index]._id);
   }
-  for (let index = 0; index < userToDel.Comments.length; index++) {
-    comment = await Comments.findOne({ _id: userToDel.Comments[index] })
-    //console.log(`comment: ${comment}`);
+  var bumps=[]
+  bumps= bumps.concat(await Bumps.find({userID:userId}));
+  for(let index=0;index<bumps.length;index++)
+  {
+    await removeBumpFromAPost(userId, bumps[index].postID);
   }
-  for (let index = 0; index < userToDel.Shares.length; index++) {
-    share = await Shares.findOne({ _id: userToDel.Shares[index] })
-    //console.log(`share: ${share}`);
+  var comments=[]
+  comments= comments.concat(await Comments.find({userID:userId}));
+  for(let index=0;index<comments.length;index++)
+  {
+    await removeCommentFromAPost(userId, comments[index].postID,comments[index]._id);
   }
-  //await SavedPosts.deleteMany({userID:userId});
-  saved = await SavedPosts.find({ userID: userId });
-  //console.log(`saved: ${saved}`);
+  var share=[]
+  share= share.concat(await Shares.find({userID:userId}));
+  for(let index=0;index<share.length;index++)
+  {
+    await removeShareFromAPost(userId, share[index].postID,share[index]._id);
+  }
+  await SavedPosts.deleteMany({userID:userId});
+  await Follows.deleteMany({
+    $or: [
+      { userID1: userId },
+      { userID2: userId}
+    ]
+  });
+  await UserPref.deleteMany({userID:userId});
+  await LoggedIn.deleteOne({userID:userId});
+  // await Matches.deleteMany({
+  //   $or: [
+  //     { userID1: userId },
+  //     { userID2: userId}
+  //   ]
+  // });
+  await User.deleteOne({_id:userId});
+  return true;
 }
 
 
@@ -731,5 +755,6 @@ export default {
   removeCommentFromASharedPost,
   addBumpToSharedPost,
   removeBumpFromASharedPost,
-  getTimeOnLine
+  getTimeOnLine,
+  removeUser
 };
