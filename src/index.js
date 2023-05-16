@@ -344,18 +344,21 @@ app.get('/profile/:id', async (req, res) => {
   });
 });
 
+// return the saved post of the user to the front
 app.get('/profile/saved/:id', async (req, res) => {
   const { id } = req.params;
   const savedpost = await DbApi.getThePostsAUserSaved(id);
   res.json({ savedpost });
 });
 
+// return the post a user Bumped to the front
 app.get('/profile/bumped/:id', async (req, res) => {
   const { id } = req.params;
   const bumpedpost = await DbApi.getThePostsAUserBumped(id);
   res.json({ bumpedpost });
 });
 
+// return the stats of a user to the front
 app.get('/profile/stats/:id', async (req, res) => {
   const { id } = req.params;
   const bumps = await DbApi.countBumpsOnUserID(id);
@@ -368,6 +371,7 @@ app.get('/profile/stats/:id', async (req, res) => {
   });
 });
 
+// remove a user from the db
 app.get('/removeuser/:id', async (req, res) => {
   const { id } = req.params;
   const checkansw = await DbApi.removeUser(id);
