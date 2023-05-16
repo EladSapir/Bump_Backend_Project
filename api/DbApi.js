@@ -271,6 +271,21 @@ async function countSavedPostOnUserID(id) {
   return await SavedPosts.countDocuments({ userID: id });
 }
 
+//return time the user was online
+async function getTimeOnLine(id) {
+  return (await User.findOne({_id:id},{TimeLoggedIn:1})).TimeLoggedIn;
+}
+
+//count the number of posts a user wrote
+async function countNumberOfPost(id){
+  return await Posts.countDocuments({userID: id});
+}
+
+// return the number of matches of a user
+async function countNumberOfMatch(id){
+  return (await User.findOne({_id:id},{CountMatches:1})).CountMatches;
+}
+
 //check if given id already bumped a given post id
 async function didIdAlreadyBumpedPost(userid, postid) {
   var bump = await Bumps.findOne({ postID: postid, userID: userid });
@@ -688,6 +703,8 @@ export default {
   countSharesOnUserID,
   countCommentsOnUserID,
   countSavedPostOnUserID,
+  countNumberOfMatch,
+  countNumberOfPost,
   didIdAlreadyBumpedPost,
   addBumpToPost,
   createPost,
@@ -713,5 +730,6 @@ export default {
   addCommentToASharedPost,
   removeCommentFromASharedPost,
   addBumpToSharedPost,
-  removeBumpFromASharedPost
+  removeBumpFromASharedPost,
+  getTimeOnLine
 };

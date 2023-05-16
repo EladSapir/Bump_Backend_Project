@@ -14,7 +14,8 @@ const UserSchema=new Schema({
     Discord:{type: String, required: true },
     Country:{type: String, required: true },
     Language:{type: String, required: true },
-    Picture:{type: String, required: true }
+    Picture:{type: String, required: true },
+    CountMatches: {type:Number, default:0}
 },{timestamps:true});
 
 const User=mongoose.model('User',UserSchema);

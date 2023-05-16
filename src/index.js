@@ -356,7 +356,17 @@ app.get('/profile/bumped/:id', async (req, res) => {
   res.json({ bumpedpost });
 });
 
-
+app.get('/profile/stats/:id', async (req, res) => {
+  const { id } = req.params;
+  const bumps = await DbApi.countBumpsOnUserID(id);
+  const comments = await DbApi.countCommentsOnUserID(id);
+  const onlinetime = await DbApi.getTimeOnLine(id);
+  const matches = await DbApi.countNumberOfMatch(id);
+  const posts = await DbApi.countNumberOfPost(id);
+  res.json({
+    bumps, comments, onlinetime, matches, posts,
+  });
+});
 
 
 // const routes = [];
