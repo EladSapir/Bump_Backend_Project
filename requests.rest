@@ -182,3 +182,12 @@ Content-Type: application/json
     "post":"646232de79fee60a6316c17c",
     "user":"64524121806a7b42422e4fa2"
 }
+
+#####
+GET http://localhost:5000/profile/64524121806a7b42422e4fa1
+
+###
+GET http://localhost:5000/profile/saved/64524121806a7b42422e4fa1
+
+###
+GET http://localhost:5000/profile/bumped/64524121806a7b42422e4fa1

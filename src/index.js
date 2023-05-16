@@ -97,7 +97,7 @@ app.get('/homepage/:id', async (req, res) => {
   }
   posts = posts.concat(await DbApi.getThePostsOfAUser(id));
   posts = posts.concat(await DbApi.getThePostsAUserShared(id));
-
+  
   posts.sort((a, b) => b.date - a.date);
 
   res.json({ posts, gamertag: details.GamerTag, picture: details.Picture });
@@ -329,6 +329,33 @@ app.post('/removebumpfromshare', async (req, res) => {
     res.send(false);
   }
 });
+
+//fetch profile
+app.get('/profile/:id', async(req, res) => {
+  const { id } = req.params;
+  const user = await DbApi.getUserDetails(id);
+  var posts = [];
+  posts = posts.concat(await DbApi.getThePostsAUserShared(id));
+  posts = posts.concat(await DbApi.getThePostsOfAUser(id));
+  posts.sort((a, b) => b.date - a.date);
+  const followers = await DbApi.whoFollowsTheID(id);
+  const follows =await DbApi.whoIDFollows(id);
+  res.json({user, posts, followers,follows});
+})
+
+app.get('/profile/saved/:id',async(req, res) => {
+  const { id } = req.params;
+  const savedpost = await DbApi.getThePostsAUserSaved(id);
+  res.json({savedpost});
+})
+
+app.get('/profile/bumped/:id',async(req,res) => {
+  const { id } = req.params;
+  const bumpedpost = await DbApi.getThePostsAUserBumped(id);
+  res.json({bumpedpost});
+})
+
+
 
 // const routes = [];
 // for (const layer of app._router.stack) {

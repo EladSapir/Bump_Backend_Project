@@ -43,7 +43,7 @@ function whoFollowsTheID(ID) {
   return Follows.find({ userID2: ID }, 'userID1')
     .then((result) => {
       const promises = result.map((item) => {
-        return User.find({ _id: item.userID1 }, 'GamerTag _id');
+        return User.find({ _id: item.userID1 }, 'GamerTag _id Picture');
       });
       return Promise.all(promises);
     })
@@ -202,7 +202,7 @@ function whoIDFollows(ID) {
   return Follows.find({ userID1: ID }, 'userID2')
     .then((result) => {
       const promises = result.map((item) => {
-        return User.find({ _id: item.userID2 }, 'GamerTag _id');
+        return User.find({ _id: item.userID2 }, 'GamerTag _id Picture');
       });
       return Promise.all(promises);
     })
@@ -581,8 +581,7 @@ async function getThePostsAUserBumped(userId) {
 
 //gets all the posts a user has saved.
 async function getThePostsAUserSaved(userId) {
-  var mySavedPosts = await Bumps.find({ userID: userId }, { postID: 1 });
-
+  var mySavedPosts = await SavedPosts.find({ userID: userId }, { postID: 1 });
   var posts = [];
   for (let index = 0; index < mySavedPosts.length; index++) {
     var post = await makePostForPostId(mySavedPosts[index].postID,userId);
