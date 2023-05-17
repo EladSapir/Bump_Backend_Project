@@ -734,6 +734,43 @@ async function removeBumpFromASharedPost(userId, postId) {
   else
     return false;
 }
+async function searchByGamerTag(name,searchid){
+  try{
+    const regex = new RegExp(name, 'i');
+    const result = await User.find({GamerTag: regex},{_id:1,GamerTag:1,Picture:1});
+    var arr=[];
+    if(result)
+    {
+      var follows = [];
+      var nonfollows = [];
+      for (let index = 0; index < result.length; index++) {
+        var searchfollow = await Follows.findOne({userID1:searchid,userID2:result[index]._id})
+        if(searchfollow)
+        {
+          console.log(searchfollow);
+          follows.push(result[index]);
+        }
+        else
+        {
+          nonfollows.push(result[index]);
+        }
+      }
+      arr = arr.concat(follows);
+      arr = arr.concat(nonfollows);
+    }
+    if(arr.length == 0)
+    {
+      return false;
+    }
+    return arr;
+  }
+
+  catch(error)
+  {
+    return false;
+  }
+  
+}
 
 export default {
   checkIfEmailExistsInUsers,
@@ -781,5 +818,6 @@ export default {
   addBumpToSharedPost,
   removeBumpFromASharedPost,
   getTimeOnLine,
-  removeUser
+  removeUser,
+  searchByGamerTag
 };

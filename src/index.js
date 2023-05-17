@@ -395,6 +395,20 @@ app.get('/removeuser/:id', async (req, res) => {
   }
 });
 
+app.post('/search', async (req, res) => {
+  const { searchQuery } = req.body;
+  const { userId } = req.body;
+  const searchresult = await DbApi.searchByGamerTag(searchQuery, userId);
+  if (searchresult)
+  {
+    res.send(searchresult);
+  }
+  else
+  {
+    res.send(false);
+  }
+});
+
 // const routes = [];
 // for (const layer of app._router.stack) {
 //   if (layer.route) {
@@ -408,3 +422,4 @@ app.get('/removeuser/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server has started on port: ${PORT}`);
 });
+
