@@ -7,7 +7,7 @@
   "scripts": {
     "test": "npx mocha tests/*.spec.js --color",
     "dev": "nodemon src/index.js",
-    "lint": "eslint src/*.js Models/*.js --color",
+    "lint": "eslint src/*.js Models/*.js api/*.js --color",
     "start": "node src/index.js"
   },
   "repository": {
