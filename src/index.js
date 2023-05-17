@@ -409,6 +409,20 @@ app.post('/search', async (req, res) => {
   }
 });
 
+app.post('/follows', async (req, res) => {
+  const { id1 } = req.body;
+  const { id2 } = req.body;
+  const followsid = await DbApi.idFollowId(id1, id2);
+  if (followsid)
+  {
+    res.send(true);
+  }
+  else
+  {
+    res.send(false);
+  }
+});
+
 // const routes = [];
 // for (const layer of app._router.stack) {
 //   if (layer.route) {

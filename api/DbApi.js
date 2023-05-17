@@ -772,6 +772,17 @@ async function searchByGamerTag(name,searchid){
   
 }
 
+async function idFollowId(id1,id2)
+{
+  const newFollow = new Follows({ userID1: id1, userID2: id2 });
+  const res = await newFollow.save();
+  if(res)
+  {
+    return true;
+  }
+  return false;
+}
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -819,5 +830,6 @@ export default {
   removeBumpFromASharedPost,
   getTimeOnLine,
   removeUser,
-  searchByGamerTag
+  searchByGamerTag,
+  idFollowId
 };
