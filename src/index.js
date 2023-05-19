@@ -98,16 +98,7 @@ app.get('/homepage/:id', async (req, res) => {
   posts = posts.concat(await DbApi.getThePostsOfAUser(id));
   posts = posts.concat(await DbApi.getThePostsAUserShared(id));
   // eslint-disable-next-line array-callback-return
-  posts.sort((a, b) => {
-    // eslint-disable-next-line no-unused-expressions
-    if (a.isShared && b.isShared) b.Sdate - a.Sdate;
-    // eslint-disable-next-line no-unused-expressions
-    else if (b.isShared) b.Sdate - a.date;
-    // eslint-disable-next-line no-unused-expressions
-    else if (a.isShared) b.date - a.Sdate;
-    // eslint-disable-next-line no-unused-expressions
-    else b.date - a.date;
-  });
+  posts.sort((a, b) => b.date - a.date);
 
   res.json({ posts, gamertag: details.GamerTag, picture: details.Picture });
 });

@@ -631,7 +631,6 @@ async function getThePostsAUserShared(userId) {
     post.userProfilePicture = user.Picture;
     post.date = mySharedPosts[index].createdAt;
 
-    console.log(post);
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
