@@ -349,14 +349,22 @@ app.get('/profile/:id', async (req, res) => {
 app.get('/profile/saved/:id', async (req, res) => {
   const { id } = req.params;
   const savedpost = await DbApi.getThePostsAUserSaved(id);
-  res.json({ savedpost });
+  if (savedpost.length > 0) {
+    res.json({ savedpost });
+  } else {
+    res.send(false);
+  }
 });
 
 // return the post a user Bumped to the front
 app.get('/profile/bumped/:id', async (req, res) => {
   const { id } = req.params;
   const bumpedpost = await DbApi.getThePostsAUserBumped(id);
-  res.json({ bumpedpost });
+  if (bumpedpost.length > 0) {
+    res.json({ bumpedpost });
+  } else {
+    res.send(false);
+  }
 });
 
 // return the stats of a user to the front
