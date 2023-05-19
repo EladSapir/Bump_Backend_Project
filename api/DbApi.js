@@ -617,11 +617,21 @@ async function getThePostsAUserShared(userId) {
     comments.sort((a, b) => b.date - a.date);
     post.comments=comments;
     var user = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
-    post.Sid = mySharedPosts[index]._id;
-    post.SGamerTag = user.GamerTag;
-    post.Spicture = user.Picture;
-    post.Sdate = mySharedPosts[index].createdAt;
+    
+    post.Sid = post._id;
+    post.SGamerTag = post.GamerTag;
+    post.Spicture = post.userProfilePicture;
+    post.Sdate = post.date;
     post.numOfBumps=mySharedPosts[index].Sbumps.length;
+  
+    
+    
+    post._id = mySharedPosts[index]._id;
+    post.GamerTag = user.GamerTag;
+    post.userProfilePicture = user.Picture;
+    post.date = mySharedPosts[index].createdAt;
+
+    console.log(post);
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
