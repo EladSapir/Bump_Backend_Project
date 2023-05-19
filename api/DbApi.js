@@ -666,7 +666,7 @@ async function getThePostsAUserSaved(userId) {
   var mySavedPosts = await SavedPosts.find({ userID: userId }, { postID: 1 });
   var posts = [];
   for (let index = 0; index < mySavedPosts.length; index++) {
-      post = await makePostForPostId(mySavedPosts[index].postID, userId, false);
+      var post = await makePostForPostId(mySavedPosts[index].postID, userId, false);
       posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
