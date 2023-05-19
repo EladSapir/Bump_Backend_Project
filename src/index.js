@@ -113,11 +113,11 @@ app.get('/myposts/:id', (req, res) => {
 });
 
 // logout
-app.get('/logout/:id', (req, res) => {
+app.get('/logout/:id', async (req, res) => {
   const { id } = req.params;
-  DbApi.logOut(id).then((result) => {
-    res.json(result);
-  });
+  const result = await DbApi.logOut(id);
+  if (result) res.send(true);
+  else res.send(false);
 });
 
 
@@ -376,12 +376,10 @@ app.get('/profile/stats/:id', async (req, res) => {
 app.get('/removeuser/:id', async (req, res) => {
   const { id } = req.params;
   const checkansw = await DbApi.removeUser(id);
-  if (checkansw)
-  {
+  if (checkansw) {
     res.send(true);
   }
-  else
-  {
+  else {
     res.send(false);
   }
 });
@@ -390,12 +388,10 @@ app.post('/search', async (req, res) => {
   const { searchQuery } = req.body;
   const { userId } = req.body;
   const searchresult = await DbApi.searchByGamerTag(searchQuery, userId);
-  if (searchresult)
-  {
+  if (searchresult) {
     res.send(searchresult);
   }
-  else
-  {
+  else {
     res.send(false);
   }
 });
@@ -404,12 +400,10 @@ app.post('/follows', async (req, res) => {
   const { id1 } = req.body;
   const { id2 } = req.body;
   const followsid = await DbApi.idFollowId(id1, id2);
-  if (followsid)
-  {
+  if (followsid) {
     res.send(true);
   }
-  else
-  {
+  else {
     res.send(false);
   }
 });
