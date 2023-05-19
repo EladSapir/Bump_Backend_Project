@@ -273,17 +273,17 @@ async function countSavedPostOnUserID(id) {
 
 //return time the user was online
 async function getTimeOnLine(id) {
-  return (await User.findOne({_id:id},{TimeLoggedIn:1})).TimeLoggedIn;
+  return (await User.findOne({ _id: id }, { TimeLoggedIn: 1 })).TimeLoggedIn;
 }
 
 //count the number of posts a user wrote
-async function countNumberOfPost(id){
-  return await Posts.countDocuments({userID: id});
+async function countNumberOfPost(id) {
+  return await Posts.countDocuments({ userID: id });
 }
 
 // return the number of matches of a user
-async function countNumberOfMatch(id){
-  return (await User.findOne({_id:id},{CountMatches:1})).CountMatches;
+async function countNumberOfMatch(id) {
+  return (await User.findOne({ _id: id }, { CountMatches: 1 })).CountMatches;
 }
 
 //check if given id already bumped a given post id
@@ -346,8 +346,9 @@ async function addCommentToPost(tpostid, tuserid, ttext) {
   var newcomment = new Comments({ postID: tpostid, userID: tuserid, text: ttext });
   var tcomment = await newcomment.save();
   var comment = await Posts.updateOne({ _id: tpostid }, { $push: { comments: tcomment._id } });
-  if(comment){
-    return tcomment._id;}
+  if (comment) {
+    return tcomment._id;
+  }
   return false;
 }
 
@@ -377,7 +378,7 @@ async function addSaveToPost(tpostid, tuserid) {
 //create a new share post and return if the shares was created
 //receive post id and user id
 async function addShareToPost(tpostid, tuserid) {
-  var newshare = new Shares({ postID: tpostid, userID: tuserid});
+  var newshare = new Shares({ postID: tpostid, userID: tuserid });
   var tshare = await newshare.save();
   var share = await Posts.updateOne({ _id: tpostid }, { $push: { shares: tshare._id } });
   return true
@@ -420,17 +421,16 @@ async function removeBumpFromAPost(userId, postId) {
 
 //remove specific comment from given post id
 async function removeCommentFromAPost(userId, postId, commentId) {
-  var toDelete = await Comments.findOne({ _id: commentId , userID: userId, postID: postId});
+  var toDelete = await Comments.findOne({ _id: commentId, userID: userId, postID: postId });
   if (toDelete === null) {
     return false;
   }
-  else
-  {
+  else {
     await Posts.updateOne({ _id: postId }, { $pull: { comments: commentId } });
     await Comments.deleteOne({ _id: toDelete._id });
     return true;
   }
-    
+
 }
 
 
@@ -471,76 +471,81 @@ async function removePost(postId) {
 
 ////change to deleteOne ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 3times ~~~~~~~~~~~~~~~~~~~~~~ !!!!!!!!!!!!!!!!!!!!!!
 async function removeUser(userId) {
-  var posts= [];
-  posts=posts.concat(await Posts.find({userID:userId}));
-  for(let index=0;index<posts.length;index++)
-  {
+  var posts = [];
+  posts = posts.concat(await Posts.find({ userID: userId }));
+  for (let index = 0; index < posts.length; index++) {
     await removePost(posts[index]._id);
   }
-  var bumps=[]
-  bumps= bumps.concat(await Bumps.find({userID:userId}));
-  for(let index=0;index<bumps.length;index++)
-  {
+  var bumps = []
+  bumps = bumps.concat(await Bumps.find({ userID: userId }));
+  for (let index = 0; index < bumps.length; index++) {
     await removeBumpFromAPost(userId, bumps[index].postID);
   }
-  var comments=[]
-  comments= comments.concat(await Comments.find({userID:userId}));
-  for(let index=0;index<comments.length;index++)
-  {
-    await removeCommentFromAPost(userId, comments[index].postID,comments[index]._id);
+  var comments = []
+  comments = comments.concat(await Comments.find({ userID: userId }));
+  for (let index = 0; index < comments.length; index++) {
+    await removeCommentFromAPost(userId, comments[index].postID, comments[index]._id);
   }
-  var share=[]
-  share= share.concat(await Shares.find({userID:userId}));
-  for(let index=0;index<share.length;index++)
-  {
-    await removeShareFromAPost(userId, share[index].postID,share[index]._id);
+  var share = []
+  share = share.concat(await Shares.find({ userID: userId }));
+  for (let index = 0; index < share.length; index++) {
+    await removeShareFromAPost(userId, share[index].postID, share[index]._id);
   }
-  await SavedPosts.deleteMany({userID:userId});
+  await SavedPosts.deleteMany({ userID: userId });
   await Follows.deleteMany({
     $or: [
       { userID1: userId },
-      { userID2: userId}
+      { userID2: userId }
     ]
   });
-  await UserPref.deleteMany({userID:userId});
-  await LoggedIn.deleteOne({userID:userId});
+  await UserPref.deleteMany({ userID: userId });
+  await LoggedIn.deleteOne({ userID: userId });
   // await Matches.deleteMany({
   //   $or: [
   //     { userID1: userId },
   //     { userID2: userId}
   //   ]
   // });
-  await User.deleteOne({_id:userId});
+  await User.deleteOne({ _id: userId });
   return true;
 }
 
 
 //builds an object of a post by a post id 
 //with all that is needed for the post
-async function makePostForPostId(postId,userIDToCheck) {
+async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
   var post = await Posts.findOne({ _id: postId });
-  var user = await User.findOne({ _id: post.userID });
+  var user;
+  
+  if (post) {
+    user = await User.findOne({ _id: post.userID });
+    var ifUserBumped = await Bumps.findOne({ userID: userIDToCheck, postID: post._id });
+    var hasUserBumped = false;
+    if (ifUserBumped !== null) {
+      hasUserBumped = true;
+    }
 
-  var ifUserBumped = await Bumps.findOne({ userID: userIDToCheck, postID: post._id });
-  var hasUserBumped = false;
-  if (ifUserBumped !== null) {
-    hasUserBumped = true;
+    var ifUserSaved = await SavedPosts.findOne({ userID: userIDToCheck, postID: post._id });
+    var hasUserSaved = false;
+    if (ifUserSaved !== null) {
+      hasUserSaved = true;
+    }
+  }
+  else {
+    var sharedPostOfAUser = await Shares.findOne({ _id: postId });
+    user = await User.findOne({ _id: sharedPostOfAUser.userID });
+    post = await Posts.findOne({ _id: sharedPostOfAUser.postID });
+    var user1 = await User.findOne({ _id: post.userID });
   }
 
-  var ifUserSaved = await SavedPosts.findOne({ userID: userIDToCheck, postID: post._id });
-  var hasUserSaved = false;
-  if (ifUserSaved !== null) {
-    hasUserSaved = true;
-  }
-
-  var commentsByPostId = await Comments.find({ postID: post._id });
+  var commentsByPostId = await Comments.find({ postID: postId });
   var comments = [];
   for (let index = 0; index < commentsByPostId.length; index++) {
     var comment = commentsByPostId[index];
     var user1 = await User.findOne({ _id: comment.userID }, { GamerTag: 1, Picture: 1 });
     var comment = {
       _id: comment._id,
-      userID:comment.userID,
+      userID: comment.userID,
       GamerTag: user1.GamerTag,
       Picture: user1.Picture,
       date: comment.createdAt,
@@ -550,7 +555,7 @@ async function makePostForPostId(postId,userIDToCheck) {
   }
   comments.sort((a, b) => b.date - a.date);
 
-  return {
+  var newPost = {
     _id: post._id,
     userID: user._id,
     GamerTag: user.GamerTag,
@@ -558,25 +563,60 @@ async function makePostForPostId(postId,userIDToCheck) {
     date: post.createdAt,
     text: post.text,
     picture: post.picture,
-    numOfBumps: post.bumps.length,
-    numofshares: post.shares.length,
-    hasUserBumped: hasUserBumped,
-    hasUserSaved: hasUserSaved,
-    comments:comments,
+    numOfBumps: '',
+    numofshares: '',
+    hasUserBumped: '',
+    hasUserSaved: '',
+    comments: comments,
     isShared: false,
     Sid: "",
     SGamerTag: "",
     Spicture: "",
     Sdate: ""
   }
+
+  if (isSharedFlag) {
+    newPost.isShared = true;
+
+    var sharedPost = await Shares.findOne({ _id : postId });
+    var userDetails = await getUserDetails(sharedPost.userID);
+
+    var ifUserBumpedShare = await Bumps.findOne({ userID: userIDToCheck, postID: sharedPost._id });
+    var hasUserBumpedShare = false;
+    if (ifUserBumpedShare !== null) {
+      hasUserBumpedShare = true;
+    }
+    newPost.hasUserBumped = hasUserBumpedShare;
+
+    newPost.Sid = newPost._id;
+    newPost.SGamerTag = user1.GamerTag;
+    newPost.Spicture = user1.Picture;
+    newPost.Sdate = newPost.date;
+    newPost.numOfBumps = sharedPost.Sbumps.length;
+
+    newPost._id = sharedPost._id;
+    newPost.GamerTag = userDetails.GamerTag;
+    newPost.userProfilePicture = userDetails.Picture;
+    newPost.date = sharedPost.createdAt;
+    newPost.userID = sharedPost.userID;
+  }
+  else {
+    newPost.numOfBumps = post.bumps.length;
+    newPost.numofshares = post.shares.length;
+    newPost.hasUserBumped = hasUserBumped;
+    newPost.hasUserSaved = hasUserSaved;
+  }
+
+  return newPost;
 }
 
 //gets all the posts of a user and sorts them by date.
 async function getThePostsOfAUser(userId) {
-  var myPosts = await Posts.find({ userID: userId },{_id:1});
+  var myPosts = await Posts.find({ userID: userId }, { _id: 1 });
   var posts = [];
   for (let index = 0; index < myPosts.length; index++) {
-    var post = await makePostForPostId(myPosts[index]._id,userId);
+    var post = await makePostForPostId(myPosts[index]._id, userId, false);
+    
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
@@ -590,47 +630,8 @@ async function getThePostsAUserShared(userId) {
 
   var posts = [];
   for (let index = 0; index < mySharedPosts.length; index++) {
-    var ifUserBumped = await Bumps.findOne({ userID: userId, postID: mySharedPosts[index]._id });
-    var hasUserBumped = false;
-    if (ifUserBumped !== null) {
-      hasUserBumped = true;
-    }
-    var post = await makePostForPostId(mySharedPosts[index].postID,userId);
-    post.isShared = true;
-    post.hasUserBumped=hasUserBumped;
-
-    var commentsByPostId = await Comments.find({ postID: mySharedPosts[index]._id });
-    var comments = [];
-    for (let index = 0; index < commentsByPostId.length; index++) {
-    var comment = commentsByPostId[index];
-    var user1 = await User.findOne({ _id: comment.userID }, { GamerTag: 1, Picture: 1 });
-    var comment = {
-      _id: comment._id,
-      userID:comment.userID,
-      GamerTag: user1.GamerTag,
-      Picture: user1.Picture,
-      date: comment.createdAt,
-      text: comment.text,
-    }
-    comments.push(comment);
-    }
-    comments.sort((a, b) => b.date - a.date);
-    post.comments=comments;
-    var user = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
+    var post = await makePostForPostId(mySharedPosts[index]._id, userId, true);
     
-    post.Sid = post._id;
-    post.SGamerTag = post.GamerTag;
-    post.Spicture = post.userProfilePicture;
-    post.Sdate = post.date;
-    post.numOfBumps=mySharedPosts[index].Sbumps.length;
-  
-    
-    
-    post._id = mySharedPosts[index]._id;
-    post.GamerTag = user.GamerTag;
-    post.userProfilePicture = user.Picture;
-    post.date = mySharedPosts[index].createdAt;
-
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
@@ -641,14 +642,22 @@ async function getThePostsAUserShared(userId) {
 //returns all the posts that the user has bumped.
 async function getThePostsAUserBumped(userId) {
   var myLikedPosts = await Bumps.find({ userID: userId }, { postID: 1 });
-
+  
   var posts = [];
   for (let index = 0; index < myLikedPosts.length; index++) {
-    var post = await makePostForPostId(myLikedPosts[index].postID,userId);
-    posts.push(post);
+    var sharedPost = await Shares.findOne({ _id: myLikedPosts[index].postID });
+    var post;
+    if (!sharedPost) {
+      post = await makePostForPostId(myLikedPosts[index].postID, userId, false);
+      posts.push(post);
+    }
+    else {
+      post = await makePostForPostId(myLikedPosts[index].postID, userId, true);
+      posts.push(post);
+    }
   }
   posts.sort((a, b) => b.date - a.date);
-
+  
   return posts;
 }
 
@@ -657,8 +666,8 @@ async function getThePostsAUserSaved(userId) {
   var mySavedPosts = await SavedPosts.find({ userID: userId }, { postID: 1 });
   var posts = [];
   for (let index = 0; index < mySavedPosts.length; index++) {
-    var post = await makePostForPostId(mySavedPosts[index].postID,userId);
-    posts.push(post);
+      post = await makePostForPostId(mySavedPosts[index].postID, userId, false);
+      posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
 
@@ -667,28 +676,27 @@ async function getThePostsAUserSaved(userId) {
 
 
 // this function logs out the user and calculates the time he was logged in (in seconds)
-async function logOut(userId){
-  const logInData = await LoggedIn.findOne({userID: userId},{createdAt: 1});
+async function logOut(userId) {
+  const logInData = await LoggedIn.findOne({ userID: userId }, { createdAt: 1 });
   const timeLoggedIn = logInData.createdAt;
   const timeLoggedOut = new Date();
   const timeDifferenceMs = timeLoggedOut - timeLoggedIn;
-  const timeDifferenceSecs = Math.round(timeDifferenceMs / 1000 );
-  const user = await User.findOne({_id: userId},{TimeLoggedIn: 1});
+  const timeDifferenceSecs = Math.round(timeDifferenceMs / 1000);
+  const user = await User.findOne({ _id: userId }, { TimeLoggedIn: 1 });
   const newTotalTime = user.TimeLoggedIn + timeDifferenceSecs;
-  var res1 = await User.updateOne({_id: userId}, {TimeLoggedIn: newTotalTime});
-  var res2 = await LoggedIn.deleteOne({userID:userId});
-  if(res1 && res2){
+  var res1 = await User.updateOne({ _id: userId }, { TimeLoggedIn: newTotalTime });
+  var res2 = await LoggedIn.deleteOne({ userID: userId });
+  if (res1 && res2) {
     return true;
   }
   return false;
 }
 
 // returns the gamer tag and picture of a userid 
-async function getUserDetails(userId){
-  var details = await User.findOne({_id:userId},{GamerTag:1,Picture:1});
-  if(details)
-  {
-  return details
+async function getUserDetails(userId) {
+  var details = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
+  if (details) {
+    return details
   }
   return false;
 }
@@ -698,24 +706,24 @@ async function addCommentToASharedPost(tpostid, tuserid, ttext) {
   var newcomment = new Comments({ postID: tpostid, userID: tuserid, text: ttext });
   var tcomment = await newcomment.save();
   var comment = await Shares.updateOne({ _id: tpostid }, { $push: { Scomments: tcomment._id } });
-  if(comment){
-    return tcomment._id;}
+  if (comment) {
+    return tcomment._id;
+  }
   return false;
 }
 
 //remove specific comment from given share id
 async function removeCommentFromASharedPost(userId, postId, commentId) {
-  var toDelete = await Comments.findOne({ _id: commentId , userID: userId, postID: postId});
+  var toDelete = await Comments.findOne({ _id: commentId, userID: userId, postID: postId });
   if (toDelete === null) {
     return false;
   }
-  else
-  {
+  else {
     await Shares.updateOne({ _id: postId }, { $pull: { Scomments: commentId } });
     await Comments.deleteOne({ _id: toDelete._id });
     return true;
   }
-    
+
 }
 
 // add bump to a given shared post (id)
@@ -743,50 +751,43 @@ async function removeBumpFromASharedPost(userId, postId) {
   else
     return false;
 }
-async function searchByGamerTag(name,searchid){
-  try{
+async function searchByGamerTag(name, searchid) {
+  try {
     const regex = new RegExp(name, 'i');
-    const result = await User.find({GamerTag: regex},{_id:1,GamerTag:1,Picture:1});
-    var arr=[];
-    if(result)
-    {
+    const result = await User.find({ GamerTag: regex }, { _id: 1, GamerTag: 1, Picture: 1 });
+    var arr = [];
+    if (result) {
       var follows = [];
       var nonfollows = [];
       for (let index = 0; index < result.length; index++) {
-        var searchfollow = await Follows.findOne({userID1:searchid,userID2:result[index]._id})
-        if(searchfollow)
-        {
+        var searchfollow = await Follows.findOne({ userID1: searchid, userID2: result[index]._id })
+        if (searchfollow) {
           console.log(searchfollow);
           follows.push(result[index]);
         }
-        else
-        {
+        else {
           nonfollows.push(result[index]);
         }
       }
       arr = arr.concat(follows);
       arr = arr.concat(nonfollows);
     }
-    if(arr.length == 0)
-    {
+    if (arr.length == 0) {
       return false;
     }
     return arr;
   }
 
-  catch(error)
-  {
+  catch (error) {
     return false;
   }
-  
+
 }
 
-async function idFollowId(id1,id2)
-{
+async function idFollowId(id1, id2) {
   const newFollow = new Follows({ userID1: id1, userID2: id2 });
   const res = await newFollow.save();
-  if(res)
-  {
+  if (res) {
     return true;
   }
   return false;
