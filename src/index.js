@@ -418,6 +418,11 @@ app.post('/follows', async (req, res) => {
   }
 });
 
+app.post('/unfollow', async (req, res) => {
+  const { id1 } = req.body;
+  const { id2 } = req.body;
+  res.send(await DbApi.removeAFollowerFromId(id1, id2));
+});
 // const routes = [];
 // for (const layer of app._router.stack) {
 //   if (layer.route) {

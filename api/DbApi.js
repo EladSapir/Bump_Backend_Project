@@ -385,24 +385,11 @@ async function addShareToPost(tpostid, tuserid) {
 }
 
 
-
-//The userID is the user that is following the other user and the follows is the user that is being followed.
-//The function returns true if the addition is successful, and false if it is not.
-async function addAFollowerToId(userID, follows) {
-  var newfollow = new Follows({ userID1: userID, userID2: follows });
-  var tnewfollow = await newfollow.save();
-  if (tnewfollow)
-    return tnewfollow._id;
-  else
-    return false;
-}
-
-
 // Deletes the 'follows from following the 'userID'.
 // The function returns the number of followers that were deleted.
 async function removeAFollowerFromId(userID, follows) {
-  var ans = await Follows.deleteOne({ userID1: userID, userID2: follows });
-  return ans.deletedCount;
+  await Follows.deleteOne({ userID1: userID, userID2: follows });
+  return true;
 }
 
 // remove a given bump from a given post id 
@@ -831,7 +818,6 @@ export default {
   editComment,
   addSaveToPost,
   addShareToPost,
-  addAFollowerToId,
   removeAFollowerFromId,
   removeBumpFromAPost,
   removeCommentFromAPost,
