@@ -141,10 +141,10 @@ app.post('/editpost', async (req, res) => {
   const { txt } = req.body;
   const result = await DbApi.editPost(postid, txt);
   if (result === false) {
-    res.send('false');
+    res.send(false);
   }
   else {
-    res.send('true');
+    res.send(true);
   }
 });
 
