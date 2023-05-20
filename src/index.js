@@ -331,17 +331,19 @@ app.post('/removebumpfromshare', async (req, res) => {
 });
 
 // fetch profile
-app.get('/profile/:id', async (req, res) => {
-  const { id } = req.params;
-  const user = await DbApi.getUserDetails(id);
+app.post('/profile', async (req, res) => {
+  const { profileid } = req.body;
+  const { idtocheck } = req.body;
+  const user = await DbApi.getUserDetails(profileid);
   let posts = [];
-  posts = posts.concat(await DbApi.getThePostsAUserShared(id));
-  posts = posts.concat(await DbApi.getThePostsOfAUser(id));
+  posts = posts.concat(await DbApi.getThePostsAUserShared(profileid));
+  posts = posts.concat(await DbApi.getThePostsOfAUser(profileid));
   posts.sort((a, b) => b.date - a.date);
-  const followers = await DbApi.whoFollowsTheID(id);
-  const follows = await DbApi.whoIDFollows(id);
+  const followers = await DbApi.whoFollowsTheID(profileid);
+  const follows = await DbApi.whoIDFollows(profileid);
+  const iffollows = await DbApi.ifFollow(idtocheck, profileid);
   res.json({
-    user, posts, followers, follows,
+    user, posts, followers, follows, iffollows,
   });
 });
 

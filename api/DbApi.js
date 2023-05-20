@@ -751,6 +751,8 @@ async function removeBumpFromASharedPost(userId, postId) {
   else
     return false;
 }
+
+//search function to navbar
 async function searchByGamerTag(name, searchid) {
   try {
     const regex = new RegExp(name, 'i');
@@ -783,11 +785,20 @@ async function searchByGamerTag(name, searchid) {
   }
 
 }
-
+ //add follow from id to id 
 async function idFollowId(id1, id2) {
   const newFollow = new Follows({ userID1: id1, userID2: id2 });
   const res = await newFollow.save();
   if (res) {
+    return true;
+  }
+  return false;
+}
+
+//check if id follows id
+async function ifFollow(id1,id2){
+  const res= await Follows.findOne({userID1:id1,userID2:id2});
+  if(res){
     return true;
   }
   return false;
@@ -841,5 +852,6 @@ export default {
   getTimeOnLine,
   removeUser,
   searchByGamerTag,
-  idFollowId
+  idFollowId,
+  ifFollow
 };
