@@ -101,6 +101,7 @@ app.get('/homepage/:id', async (req, res) => {
   posts.sort((a, b) => b.date - a.date);
   for (let index = 0; index < posts.length; index++) {
     posts[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(id, posts[index]._id);
+    posts[index].hasUserSaved = await DbApi.checkIfUserSavedPost(id, posts[index]._id);
   }
   res.json({ posts, gamertag: details.GamerTag, picture: details.Picture });
 });
@@ -117,6 +118,7 @@ app.get('/myposts/:id', (req, res) => {
 // logout
 app.get('/logout/:id', async (req, res) => {
   const { id } = req.params;
+  console.log(`id: ${id} asked to log out`);
   const result = await DbApi.logOut(id);
   if (result) res.send(true);
   else res.send(false);
@@ -344,6 +346,7 @@ app.post('/profile', async (req, res) => {
   posts.sort((a, b) => b.date - a.date);
   for (let index = 0; index < posts.length; index++) {
     posts[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(idtocheck, posts[index]._id);
+    posts[index].hasUserSaved = await DbApi.checkIfUserSavedPost(idtocheck, posts[index]._id);
   }
   const followers = await DbApi.whoFollowsTheID(profileid);
   const follows = await DbApi.whoIDFollows(profileid);
@@ -359,6 +362,7 @@ app.get('/profile/saved/:id', async (req, res) => {
   const savedpost = await DbApi.getThePostsAUserSaved(id);
   for (let index = 0; index < savedpost.length; index++) {
     savedpost[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(id, savedpost[index]._id);
+    savedpost[index].hasUserSaved = await DbApi.checkIfUserSavedPost(id, savedpost[index]._id);
   }
   if (savedpost.length > 0) {
     res.json({ savedpost });

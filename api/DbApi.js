@@ -825,6 +825,15 @@ async function checkIfUserBumpedPost(userIDToCheck, postIDToCheck) {
   return hasUserBumped;
 }
 
+async function checkIfUserSavedPost(userIDToCheck, postIDToCheck) {
+  var ifUserSaved = await SavedPosts.findOne({ userID: userIDToCheck, postID: postIDToCheck });
+  var hasUserSaved = false;
+  if (ifUserSaved !== null) {
+    hasUserSaved = true;
+  }
+  return hasUserSaved;
+}
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -875,5 +884,6 @@ export default {
   idFollowId,
   ifFollow,
   cleanDataBases,
-  checkIfUserBumpedPost
+  checkIfUserBumpedPost,
+  checkIfUserSavedPost
 };
