@@ -503,7 +503,7 @@ async function removeUser(userId) {
 async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
   var post = await Posts.findOne({ _id: postId });
   var user;
-  
+
   if (post) {
     user = await User.findOne({ _id: post.userID });
     var ifUserBumped = await Bumps.findOne({ userID: userIDToCheck, postID: post._id });
@@ -559,13 +559,14 @@ async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
     Sid: "",
     SGamerTag: "",
     Spicture: "",
-    Sdate: ""
+    Sdate: "",
+    Suserid: "",
   }
 
   if (isSharedFlag) {
     newPost.isShared = true;
 
-    var sharedPost = await Shares.findOne({ _id : postId });
+    var sharedPost = await Shares.findOne({ _id: postId });
     var userDetails = await getUserDetails(sharedPost.userID);
 
     var ifUserBumpedShare = await Bumps.findOne({ userID: userIDToCheck, postID: sharedPost._id });
@@ -576,6 +577,7 @@ async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
     newPost.hasUserBumped = hasUserBumpedShare;
 
     newPost.Sid = newPost._id;
+    newPost.Suserid = user2._id;
     newPost.SGamerTag = user2.GamerTag;
     newPost.Spicture = user2.Picture;
     newPost.Sdate = newPost.date;
@@ -603,7 +605,7 @@ async function getThePostsOfAUser(userId) {
   var posts = [];
   for (let index = 0; index < myPosts.length; index++) {
     var post = await makePostForPostId(myPosts[index]._id, userId, false);
-    
+
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
@@ -618,7 +620,7 @@ async function getThePostsAUserShared(userId) {
   var posts = [];
   for (let index = 0; index < mySharedPosts.length; index++) {
     var post = await makePostForPostId(mySharedPosts[index]._id, userId, true);
-    
+
     posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
@@ -629,7 +631,7 @@ async function getThePostsAUserShared(userId) {
 //returns all the posts that the user has bumped.
 async function getThePostsAUserBumped(userId) {
   var myLikedPosts = await Bumps.find({ userID: userId }, { postID: 1 });
-  
+
   var posts = [];
   for (let index = 0; index < myLikedPosts.length; index++) {
     var sharedPost = await Shares.findOne({ _id: myLikedPosts[index].postID });
@@ -642,9 +644,15 @@ async function getThePostsAUserBumped(userId) {
       post = await makePostForPostId(myLikedPosts[index].postID, userId, true);
       posts.push(post);
     }
+    var ifUserSaved = await SavedPosts.findOne({ userID: userId, postID: post._id });
+    var hasUserSaved = false;
+    if (ifUserSaved !== null) {
+      hasUserSaved = true;
+    }
+    post.hasUserSaved = hasUserSaved;
   }
   posts.sort((a, b) => b.date - a.date);
-  
+
   return posts;
 }
 
@@ -653,8 +661,8 @@ async function getThePostsAUserSaved(userId) {
   var mySavedPosts = await SavedPosts.find({ userID: userId }, { postID: 1 });
   var posts = [];
   for (let index = 0; index < mySavedPosts.length; index++) {
-      var post = await makePostForPostId(mySavedPosts[index].postID, userId, false);
-      posts.push(post);
+    var post = await makePostForPostId(mySavedPosts[index].postID, userId, false);
+    posts.push(post);
   }
   posts.sort((a, b) => b.date - a.date);
 
@@ -772,7 +780,7 @@ async function searchByGamerTag(name, searchid) {
   }
 
 }
- //add follow from id to id 
+//add follow from id to id 
 async function idFollowId(id1, id2) {
   const newFollow = new Follows({ userID1: id1, userID2: id2 });
   const res = await newFollow.save();
@@ -783,15 +791,15 @@ async function idFollowId(id1, id2) {
 }
 
 //check if id follows id
-async function ifFollow(id1,id2){
-  const res= await Follows.findOne({userID1:id1,userID2:id2});
-  if(res){
+async function ifFollow(id1, id2) {
+  const res = await Follows.findOne({ userID1: id1, userID2: id2 });
+  if (res) {
     return true;
   }
   return false;
 }
 
-async function cleanDataBases(){
+async function cleanDataBases() {
   await Bumps.deleteMany({});
   await Comments.deleteMany({});
   await Follows.deleteMany({});
