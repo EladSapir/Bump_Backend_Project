@@ -816,6 +816,15 @@ async function cleanDataBases() {
   return true;
 }
 
+async function checkIfUserBumpedPost(userIDToCheck, postIDToCheck) {
+  var ifUserBumped = await Bumps.findOne({ userID: userIDToCheck, postID: postIDToCheck });
+  var hasUserBumped = false;
+  if (ifUserBumped !== null) {
+    hasUserBumped = true;
+  }
+  return hasUserBumped;
+}
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -865,5 +874,6 @@ export default {
   searchByGamerTag,
   idFollowId,
   ifFollow,
-  cleanDataBases
+  cleanDataBases,
+  checkIfUserBumpedPost
 };

@@ -99,7 +99,9 @@ app.get('/homepage/:id', async (req, res) => {
   posts = posts.concat(await DbApi.getThePostsAUserShared(id));
   // eslint-disable-next-line array-callback-return
   posts.sort((a, b) => b.date - a.date);
-
+  for (let index = 0; index < posts.length; index++) {
+    posts[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(id, posts[index]._id);
+  }
   res.json({ posts, gamertag: details.GamerTag, picture: details.Picture });
 });
 
@@ -340,6 +342,9 @@ app.post('/profile', async (req, res) => {
   posts = posts.concat(await DbApi.getThePostsAUserShared(profileid));
   posts = posts.concat(await DbApi.getThePostsOfAUser(profileid));
   posts.sort((a, b) => b.date - a.date);
+  for (let index = 0; index < posts.length; index++) {
+    posts[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(idtocheck, posts[index]._id);
+  }
   const followers = await DbApi.whoFollowsTheID(profileid);
   const follows = await DbApi.whoIDFollows(profileid);
   const iffollows = await DbApi.ifFollow(idtocheck, profileid);
@@ -352,6 +357,9 @@ app.post('/profile', async (req, res) => {
 app.get('/profile/saved/:id', async (req, res) => {
   const { id } = req.params;
   const savedpost = await DbApi.getThePostsAUserSaved(id);
+  for (let index = 0; index < savedpost.length; index++) {
+    savedpost[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(id, savedpost[index]._id);
+  }
   if (savedpost.length > 0) {
     res.json({ savedpost });
   } else {
@@ -363,6 +371,9 @@ app.get('/profile/saved/:id', async (req, res) => {
 app.get('/profile/bumped/:id', async (req, res) => {
   const { id } = req.params;
   const bumpedpost = await DbApi.getThePostsAUserBumped(id);
+  for (let index = 0; index < bumpedpost.length; index++) {
+    bumpedpost[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(id, bumpedpost[index]._id);
+  }
   if (bumpedpost.length > 0) {
     res.json({ bumpedpost });
   } else {
