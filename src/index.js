@@ -43,7 +43,6 @@ app.get('/test/:id', async (req, res) => {
 app.post('/register', async (req, res) => {
   const { email } = req.body;
   const { gamertag } = req.body;
-  console.log(`${req.url} - ${gamertag}`);
   const { password } = req.body;
   const { gender } = req.body;
   const { dob } = req.body;
