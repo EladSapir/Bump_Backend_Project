@@ -791,6 +791,23 @@ async function ifFollow(id1,id2){
   return false;
 }
 
+async function cleanDataBases(){
+  await Bumps.deleteMany({});
+  await Comments.deleteMany({});
+  await Follows.deleteMany({});
+  await LeagueOfLegends.deleteMany({});
+  await LoggedIn.deleteMany({});
+  await Matches.deleteMany({});
+  await Posts.deleteMany({});
+  await RocketLeague.deleteMany({});
+  await SavedPosts.deleteMany({});
+  await Shares.deleteMany({});
+  await User.deleteMany({});
+  await UserPref.deleteMany({});
+  await Valorant.deleteMany({});
+  return true;
+}
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -839,5 +856,6 @@ export default {
   removeUser,
   searchByGamerTag,
   idFollowId,
-  ifFollow
+  ifFollow,
+  cleanDataBases
 };
