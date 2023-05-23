@@ -548,7 +548,7 @@ async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
     GamerTag: user.GamerTag,
     userProfilePicture: user.Picture,
     date: post.createdAt,
-    text: (post.text).replace(/\n/g, "<br>"),
+    text: post.text,
     picture: post.picture,
     numOfBumps: '',
     numofshares: '',
