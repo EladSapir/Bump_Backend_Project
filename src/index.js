@@ -335,6 +335,7 @@ app.post('/profile', async (req, res) => {
   const { profileid } = req.body;
   const { idtocheck } = req.body;
   const user = await DbApi.getUserDetails(profileid);
+  const user2 = await DbApi.getUserDetails(idtocheck);
   let posts = [];
   posts = posts.concat(await DbApi.getThePostsAUserShared(profileid));
   posts = posts.concat(await DbApi.getThePostsOfAUser(profileid));
@@ -343,7 +344,7 @@ app.post('/profile', async (req, res) => {
   const follows = await DbApi.whoIDFollows(profileid);
   const iffollows = await DbApi.ifFollow(idtocheck, profileid);
   res.json({
-    user, posts, followers, follows, iffollows,
+    user, posts, followers, follows, iffollows, user2,
   });
 });
 
