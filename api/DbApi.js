@@ -522,7 +522,7 @@ async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
     var sharedPostOfAUser = await Shares.findOne({ _id: postId });
     user = await User.findOne({ _id: sharedPostOfAUser.userID });
     post = await Posts.findOne({ _id: sharedPostOfAUser.postID });
-    var user1 = await User.findOne({ _id: post.userID });
+    var user2 = await User.findOne({ _id: post.userID });
   }
 
   var commentsByPostId = await Comments.find({ postID: postId });
@@ -576,8 +576,8 @@ async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
     newPost.hasUserBumped = hasUserBumpedShare;
 
     newPost.Sid = newPost._id;
-    newPost.SGamerTag = user1.GamerTag;
-    newPost.Spicture = user1.Picture;
+    newPost.SGamerTag = user2.GamerTag;
+    newPost.Spicture = user2.Picture;
     newPost.Sdate = newPost.date;
     newPost.numOfBumps = sharedPost.Sbumps.length;
 
