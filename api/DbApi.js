@@ -559,7 +559,8 @@ async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
     Sid: "",
     SGamerTag: "",
     Spicture: "",
-    Sdate: ""
+    Sdate: "",
+    Suserid: "",
   }
 
   if (isSharedFlag) {
@@ -576,6 +577,7 @@ async function makePostForPostId(postId, userIDToCheck, isSharedFlag) {
     newPost.hasUserBumped = hasUserBumpedShare;
 
     newPost.Sid = newPost._id;
+    newPost.Suserid = user2._id;
     newPost.SGamerTag = user2.GamerTag;
     newPost.Spicture = user2.Picture;
     newPost.Sdate = newPost.date;
