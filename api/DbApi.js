@@ -750,7 +750,7 @@ async function removeBumpFromASharedPost(userId, postId) {
 //search function to navbar
 async function searchByGamerTag(name, searchid) {
   try {
-    const regex = new RegExp(name, 'i');
+    const regex = new RegExp('^' + name, 'i');
     const result = await User.find({ GamerTag: regex }, { _id: 1, GamerTag: 1, Picture: 1 });
     var arr = [];
     if (result) {
@@ -773,13 +773,13 @@ async function searchByGamerTag(name, searchid) {
       return false;
     }
     return arr;
-  }
-
-  catch (error) {
+  } catch (error) {
     return false;
   }
-
 }
+
+
+
 //add follow from id to id 
 async function idFollowId(id1, id2) {
   const newFollow = new Follows({ userID1: id1, userID2: id2 });
