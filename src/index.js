@@ -87,24 +87,59 @@ app.post('/login', async (req, res) => {
 
 // get homepage of a user
 app.get('/homepage/:id', async (req, res) => {
-  const { id } = req.params;
-  let posts = [];
-  const following = await DbApi.whoIDFollows(id);
-  const details = await DbApi.getUserDetails(id);
-  for (let i = 0; i < following.length; i++) {
-    posts = posts.concat(await DbApi.getThePostsAUserShared(following[i]._id));
-    posts = posts.concat(await DbApi.getThePostsOfAUser(following[i]._id));
+  try {
+    const { id } = req.params;
+    const [following, details] = await Promise.all([
+      DbApi.whoIDFollows(id),
+      DbApi.getUserDetails(id),
+    ]);
+
+    const postsPromises = following.map(async (follow) => {
+      const [sharedPosts, userPosts] = await Promise.all([
+        DbApi.getThePostsAUserShared(follow._id),
+        DbApi.getThePostsOfAUser(follow._id),
+      ]);
+      return [...sharedPosts, ...userPosts];
+    });
+
+    const userPostsPromises = [
+      DbApi.getThePostsOfAUser(id),
+      DbApi.getThePostsAUserShared(id),
+    ];
+
+    const [userPosts, ...otherPosts] = await Promise.all([
+      ...userPostsPromises.map((promise) => promise.catch(() => [])),
+      ...postsPromises,
+    ]);
+
+    const posts = [].concat(...otherPosts, ...userPosts);
+    posts.sort((a, b) => b.date - a.date);
+
+    const postDetailsPromises = posts.map(async (post) => {
+      const [hasUserBumped, hasUserSaved] = await Promise.all([
+        DbApi.checkIfUserBumpedPost(id, post._id),
+        DbApi.checkIfUserSavedPost(id, post._id),
+      ]);
+
+      return {
+        ...post,
+        hasUserBumped,
+        hasUserSaved,
+      };
+    });
+
+    const postsWithDetails = await Promise.all(postDetailsPromises);
+
+    res.json({
+      posts: postsWithDetails,
+      gamertag: details.GamerTag,
+      picture: details.Picture,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred' });
   }
-  posts = posts.concat(await DbApi.getThePostsOfAUser(id));
-  posts = posts.concat(await DbApi.getThePostsAUserShared(id));
-  // eslint-disable-next-line array-callback-return
-  posts.sort((a, b) => b.date - a.date);
-  for (let index = 0; index < posts.length; index++) {
-    posts[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(id, posts[index]._id);
-    posts[index].hasUserSaved = await DbApi.checkIfUserSavedPost(id, posts[index]._id);
-  }
-  res.json({ posts, gamertag: details.GamerTag, picture: details.Picture });
 });
+
 
 
 // get the posts of a user
