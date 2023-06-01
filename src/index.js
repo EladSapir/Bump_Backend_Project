@@ -480,6 +480,23 @@ app.post('/unfollow', async (req, res) => {
 app.get('/cleanDataBases', async (req, res) => {
   await DbApi.cleanDataBases();
 });
+
+
+// if passchange or gamertag change is not needed send empty string
+app.post('/editprofile', async (req, res) => {
+  const { userID } = req.body;
+  const { newPass } = req.body;
+  const { gamerTag } = req.body;
+  const { game1 } = req.body;
+  const { game2 } = req.body;
+  const { game3 } = req.body;
+  const { game4 } = req.body;
+  const { game5 } = req.body;
+
+  res.send(await DbApi.EditProfile(userID, newPass, gamerTag, game1, game2, game3, game4, game5));
+});
+
+
 // const routes = [];
 // for (const layer of app._router.stack) {
 //   if (layer.route) {

@@ -147,7 +147,7 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
       return id0;
     case "1":
       //RL
-      var pref1 = await checkIfLOLprefExists(game2, game3, game4, game5);
+      var pref1 = await checkIfRLprefExists(game2, game3, game4);
       if (!pref1) {
         const newRocket = new RocketLeague({ Region: game2, Mode: game3, Rank: game4 });
         pref1 = await newRocket.save().then((res) => { return res._id });
@@ -172,7 +172,7 @@ async function signUp(TEmail, TgamerTag, Tpassword, Tgender, TDoB, game1, game2,
       return id1;
     case "2":
       //VAL
-      var pref2 = await checkIfLOLprefExists(game2, game3, game4, game5);
+      var pref2 = await checkIfValprefExists(game2, game3, game4);
       if (!pref2) {
         const newVal = new Valorant({ Server: game2, Rank: game3, Role: game4 });
         pref2 = await newVal.save().then((res) => { return res._id });
@@ -834,6 +834,56 @@ async function checkIfUserSavedPost(userIDToCheck, postIDToCheck) {
   return hasUserSaved;
 }
 
+async function editUserPref(userID, game1, game2, game3, game4, game5) {
+  switch (game1) {
+    case "0":
+      //LOL
+      var pref0 = await checkIfLOLprefExists(game2, game3, game4, game5);
+      if (!pref0) {
+        const newLOL = new LeagueOfLegends({ Region: game2, Mode: game3, Role: game4, Rank: game5 });
+        pref0 = await newLOL.save().then((res) => { return res._id });
+      }
+
+      await addPrefToUser(userID, 0, pref0);
+      await User.updateOne({ _id: userID }, { LoLpref: pref0._id });
+
+      return userID;
+    case "1":
+      //RL
+      var pref1 = await checkIfRLprefExists(game2, game3, game4);
+      if (!pref1) {
+        const newRocket = new RocketLeague({ Region: game2, Mode: game3, Rank: game4 });
+        pref1 = await newRocket.save().then((res) => { return res._id });
+      }
+
+      await addPrefToUser(userID, 1, pref1);
+      await User.updateOne({ _id: userID }, { RLpref: pref1._id });
+
+      return userID;
+    case "2":
+      //VAL
+      var pref2 = await checkIfValprefExists(game2, game3, game4);
+      if (!pref2) {
+        const newVal = new Valorant({ Server: game2, Rank: game3, Role: game4 });
+        pref2 = await newVal.save().then((res) => { return res._id });
+      }
+
+      await addPrefToUser(userID, 2, pref2);
+      await User.updateOne({ _id: userID }, { Valpref: pref2._id });
+
+      return userID;
+  }
+
+}
+
+async function EditProfile(userID, newPass, Gamertag, game1, game2, game3, game4, game5) {
+  if (await checkIfGamerTagExistsInUsers(Gamertag)) return false;
+  if (Gamertag) await User.updateOne({ _id: userID }, { GamerTag: Gamertag });
+  if (newPass) await User.updateOne({ _id: userID }, { Password: newPass });
+  await editUserPref(userID, game1, game2, game3, game4, game5);
+  return true;
+}
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -885,5 +935,6 @@ export default {
   ifFollow,
   cleanDataBases,
   checkIfUserBumpedPost,
-  checkIfUserSavedPost
+  checkIfUserSavedPost,
+  EditProfile,
 };
