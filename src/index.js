@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-await-in-loop */
@@ -494,6 +495,31 @@ app.post('/editprofile', async (req, res) => {
   const { game5 } = req.body;
 
   res.send(await DbApi.EditProfile(userID, newPass, gamerTag, game1, game2, game3, game4, game5));
+});
+
+app.get('/matchingpage/:id', async (req, res) => {
+  const { id } = req.params;
+  res.send(await DbApi.getUserGameDetailsByPref(id));
+});
+
+app.post('/submitmatchingdetails', async (req, res) => {
+  const { userId } = req.body;
+  const { language1 } = req.body;
+  const { country1 } = req.body;
+  const { language2 } = req.body;
+  const { country2 } = req.body;
+  const { game1 } = req.body;
+  const { game2 } = req.body;
+  const { game3 } = req.body;
+  const { game4 } = req.body;
+  const { game5 } = req.body;
+
+  res.send(await DbApi.getPossibeUsersForMatching(userId, language1, country1, game1, game2, game3, game4, game5, language2, country2));
+});
+
+app.get('/userdetails/:id', async (req, res) => {
+  const { id } = req.params;
+  res.send(await DbApi.getUserDetails(id));
 });
 
 

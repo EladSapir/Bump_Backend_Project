@@ -689,7 +689,7 @@ async function logOut(userId) {
 
 // returns the gamer tag and picture of a userid 
 async function getUserDetails(userId) {
-  var details = await User.findOne({ _id: userId }, { GamerTag: 1, Picture: 1 });
+  var details = await User.findOne({ _id: userId }, 'GamerTag Picture Gender Language Country' );
   if (details) {
     return details
   }
@@ -884,6 +884,68 @@ async function EditProfile(userID, newPass, Gamertag, game1, game2, game3, game4
   return true;
 }
 
+async function getUserGameDetailsByPref(userId) {
+  let lolPref = await UserPref.findOne({ userID: userId, game: 0 });
+  let rlPref = await UserPref.findOne({ userID: userId, game: 1 });
+  let valPref = await UserPref.findOne({ userID: userId, game: 2 });
+  let lolPref1, rlPref1, valPref1;
+
+  if (lolPref) {
+    lolPref1 = await LeagueOfLegends.findOne({ _id: lolPref.prefID }, '_id Region Mode Role Rank');
+  }
+  if (rlPref) {
+    rlPref1 = await RocketLeague.findOne({ _id: rlPref.prefID }, '_id Region Mode Rank');
+  }
+  if (valPref) {
+    valPref1 = await Valorant.findOne({ _id: valPref.prefID }, '_id Server Rank Role');
+  }
+
+  let userCountryLang = await User.findOne({ _id: userId }, 'Country Language');
+
+  return { LOL: lolPref1, RL: rlPref1, VAL: valPref1, Country: userCountryLang.Country, Language: userCountryLang.Language };
+}
+
+
+async function getPossibeUsersForMatching(userId, language1, country1, game1, game2, game3, game4, game5, language2, country2) {
+  if (language1 && country1) {
+    await User.updateOne({ _id : userId }, { Language: language1, Country: country1 });
+  }
+
+  else if (country1) {
+    await User.updateOne({ _id : userId }, { Country: country1 });
+  }
+
+  else if (language1) {
+    await User.updateOne({ _id : userId }, { Language: language1 });
+  }
+
+  let pref, possibleUsers, usersToRemove;
+  //כל מה שהופיע כבר ליוזר והוא הגיב לו (חיובי או שלילי) לא יופיע יותר
+  usersToRemove = await Matches.find({ userID1: userId}, 'userID2');
+ // אם היוזר הופיע למישהו אחר והוא הגיב חיובי או שלילי או שהיוזר כבר הגיב בשלילה אז הוא לא יופיע ליוזר, 
+  usersToRemove = usersToRemove.concat(await Matches.find({$or: [ { userID2: userId, check21:false },{ userID2: userId, check21:true },{ userID2: userId, check12:false }]}, 'userID1'));
+  console.log(usersToRemove);
+switch (game1) {
+  case "0":
+    pref = await LeagueOfLegends.findOne({Region:game2, Mode:game3, Role:game4, Rank: game5 }, '_id');
+    possibleUsers = await User.find({ LoLpref: pref._id, Country: country2, Language: language2 }, '_id');
+    break;
+  case "1":
+    pref = await RocketLeague.findOne({ Region:game2, Mode:game3, Rank: game4 }, '_id');
+    possibleUsers = await User.find({ RLpref: pref._id, Country: country2, Language: language2 }, '_id');
+    break;
+  case "2":
+    pref = await Valorant.findOne({ Server:game2, Rank:game3, Role: game4 }, '_id');
+    possibleUsers = await User.find({ Valpref: pref._id, Country: country2, Language: language2 }, '_id');
+    break;
+}
+  const useridString = userId.toString()
+  const filteredArray = possibleUsers.filter((element) => !usersToRemove.includes(element) && element._id.toString() != (useridString)); 
+  return filteredArray;
+}
+
+
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -937,4 +999,6 @@ export default {
   checkIfUserBumpedPost,
   checkIfUserSavedPost,
   EditProfile,
+  getUserGameDetailsByPref,
+  getPossibeUsersForMatching,
 };
