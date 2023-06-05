@@ -7,7 +7,7 @@ const { Schema } = mongoose;
 const matchesSchema = new Schema({
   userID1: { type: ObjectId, required: true },
   userID2: { type: ObjectId, required: true },
-  check12: { type: Boolean, default: true },
+  check12: Boolean,
   check21: Boolean,
 }, { timestamps: true });
 

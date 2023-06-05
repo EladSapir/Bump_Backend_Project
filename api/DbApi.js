@@ -924,7 +924,7 @@ async function getPossibeUsersForMatching(userId, language1, country1, game1, ga
   usersToRemove = await Matches.find({ userID1: userId}, 'userID2');
  // אם היוזר הופיע למישהו אחר והוא הגיב חיובי או שלילי או שהיוזר כבר הגיב בשלילה אז הוא לא יופיע ליוזר, 
   usersToRemove = usersToRemove.concat(await Matches.find({$or: [ { userID2: userId, check21:false },{ userID2: userId, check21:true },{ userID2: userId, check12:false }]}, 'userID1'));
-  console.log(usersToRemove);
+
 switch (game1) {
   case "0":
     pref = await LeagueOfLegends.findOne({Region:game2, Mode:game3, Role:game4, Rank: game5 }, '_id');
@@ -939,12 +939,24 @@ switch (game1) {
     possibleUsers = await User.find({ Valpref: pref._id, Country: country2, Language: language2 }, '_id');
     break;
 }
-  const useridString = userId.toString()
-  const filteredArray = possibleUsers.filter((element) => !usersToRemove.includes(element) && element._id.toString() != (useridString)); 
-  return filteredArray;
+  const useridString = userId.toString();
+  let loggedin = await LoggedIn.find({},'userID');
+  loggedin=loggedin.map(obj => {return obj.userID.toString()});
+  let filteredArray = possibleUsers.filter((element) => !usersToRemove.includes(element) && element._id.toString() != (useridString));
+  filteredArray=filteredArray.map(obj => {return obj._id.toString()});
+  let filterLoggedIn = filteredArray.filter((element)=> loggedin.includes(element));
+  return filterLoggedIn;
 }
-
-
+ 
+async function handleMatch(userid1,userid2,decision){
+  let match =await Matches.findOne({userID1:userid2,userID2:userid1});
+  if(match){
+    await Matches.updateOne({userID1:userid2,userID2:userid1},{check21:decision});
+  }else{
+  let newMatch = new Matches({userID1:userid1,userID2:userid2,check12:decision});
+  await newMatch.save().then((res) => { return res._id });}
+  return true;
+}
 
 export default {
   checkIfEmailExistsInUsers,
@@ -1001,4 +1013,5 @@ export default {
   EditProfile,
   getUserGameDetailsByPref,
   getPossibeUsersForMatching,
+  handleMatch,
 };

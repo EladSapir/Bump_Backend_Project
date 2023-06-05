@@ -28,7 +28,7 @@ Content-Type:  application/json
     "discord":"elaad",
     "country":"France",
     "language":"French",
-    "picture":" "
+    "picture":"https://res.cloudinary.com/dk9nwmeth/image/upload/v1684851059/etqowcpai7582s20uqrm.png"
 }
 
 ########
@@ -193,10 +193,10 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/profile/saved/64524121806a7b42422e4fa1
+GET http://localhost:5000/profile/saved/646cd06f9f763e0775e87676
 
 ###
-GET http://localhost:5000/profile/bumped/64524121806a7b42422e4fa1
+GET http://localhost:5000/profile/bumped/646cd06f9f763e0775e87676
 
 ###
 GET http://localhost:5000/profile/stats/64524121806a7b42422e4fa1
@@ -210,8 +210,8 @@ POST http://localhost:5000/search
 Content-Type: application/json
 
 {
-    "searchQuery":"l",
-    "userId":"646cd0589f763e0775e87635"
+    "searchQuery":"elad",
+    "userId":"64524121806a7b42422e4fa1"
 }
 
 
@@ -235,3 +235,52 @@ Content-Type: application/json
 
 ##########
 GET http://localhost:5000/cleanDataBases
+
+#########
+POST http://localhost:5000/editprofile
+Content-Type: application/json
+
+{
+    "userID":"646cd03b9f763e0775e8760b",
+    "newPass":"",
+    "gamerTag":"",
+    "game1":"0",
+    "game2":"z",
+    "game3":"x",
+    "game4":"c",
+    "game5":"v"
+}
+
+######
+GET http://localhost:5000/matchingPage/646ccff49f763e0775e875e7
+
+######
+GET http://localhost:5000/userdetails/646ccff49f763e0775e875e7
+
+#####
+POST http://localhost:5000/submitmatchingdetails
+Content-Type: application/json
+
+{
+    "userId":"646ccff49f763e0775e875e7",
+    "language1":"",
+    "country1":"",
+    "language2":"Hebrew",
+    "country2":"Israel",
+    "game1":"0",
+    "game2":"z",
+    "game3":"x",
+    "game4":"c",
+    "game5":"v"
+}
+
+#####
+
+POST http://localhost:5000/handlematch
+Content-Type: application/json
+
+{
+    "userId2":"646ccff49f763e0775e875e7",
+    "userId1":"646cd03b9f763e0775e8760b",
+    "flag":false
+}

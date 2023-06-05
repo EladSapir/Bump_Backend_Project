@@ -522,6 +522,14 @@ app.get('/userdetails/:id', async (req, res) => {
   res.send(await DbApi.getUserDetails(id));
 });
 
+app.post('/handlematch', async (req, res) => {
+  const { userId1 } = req.body;
+  const { userId2 } = req.body;
+  const { flag } = req.body;
+  const res1 = await DbApi.handleMatch(userId1, userId2, flag);
+  res.send(res1);
+});
+
 
 // const routes = [];
 // for (const layer of app._router.stack) {
