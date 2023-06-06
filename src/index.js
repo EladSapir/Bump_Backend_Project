@@ -387,8 +387,24 @@ app.post('/profile', async (req, res) => {
   const followers = await DbApi.whoFollowsTheID(profileid);
   const follows = await DbApi.whoIDFollows(profileid);
   const iffollows = await DbApi.ifFollow(idtocheck, profileid);
+  const games = await DbApi.getUserGameDetailsByPref(profileid);
+  let LOL = null;
+  let RL = null;
+  let VAL = null;
+  if (games.LOL)
+  {
+    LOL = games.LOL;
+  }
+  if (games.RL)
+  {
+    RL = games.RL;
+  }
+  if (games.VAL)
+  {
+    VAL = games.VAL;
+  }
   res.json({
-    user, posts, followers, follows, iffollows, user2,
+    user, posts, followers, follows, iffollows, user2, RL, VAL, LOL,
   });
 });
 
