@@ -530,6 +530,11 @@ app.post('/handlematch', async (req, res) => {
   res.send(res1);
 });
 
+app.get('/getnotifications/:id', async (req, res) => {
+  const { id } = req.params;
+  res.send(await DbApi.getNotification(id));
+});
+
 
 // const routes = [];
 // for (const layer of app._router.stack) {

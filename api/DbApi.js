@@ -689,7 +689,7 @@ async function logOut(userId) {
 
 // returns the gamer tag and picture of a userid 
 async function getUserDetails(userId) {
-  var details = await User.findOne({ _id: userId }, 'GamerTag Picture Gender Language Country' );
+  var details = await User.findOne({ _id: userId }, 'GamerTag Picture Gender Language Country Discord' );
   if (details) {
     return details
   }
@@ -958,6 +958,32 @@ async function handleMatch(userid1,userid2,decision){
   return true;
 }
 
+
+async function getNotification(userId){
+  let matches = await Matches.find({$or: [ { userID1: userId, check21:true,check12:true },{ userID2: userId, check21:true,check12:true }]}, 'userID1 userID2 updatedAt');
+  matches.sort((a, b) => b.updatedAt - a.updatedAt);
+
+  let users=[];
+  userId=userId.toString();
+  for (let index = 0; index < matches.length; index++) {
+    if(userId==matches[index].userID1.toString())
+    {
+      users.push(await getUserDetails(matches[index].userID2.toString()));
+    }
+    else{
+      users.push(await getUserDetails(matches[index].userID1.toString()));
+    }
+  }
+  if(users.length==0)
+  {
+    return false;
+  }
+  return users;
+}
+
+
+
+
 export default {
   checkIfEmailExistsInUsers,
   checkIfGamerTagExistsInUsers,
@@ -1014,4 +1040,5 @@ export default {
   getUserGameDetailsByPref,
   getPossibeUsersForMatching,
   handleMatch,
+  getNotification
 };

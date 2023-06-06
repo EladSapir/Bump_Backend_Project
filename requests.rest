@@ -284,3 +284,6 @@ Content-Type: application/json
     "userId1":"646cd03b9f763e0775e8760b",
     "flag":false
 }
+
+##########
+GET http://localhost:5000/getnotifications/646ccff49f763e0775e875e7
