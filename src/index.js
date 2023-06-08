@@ -509,8 +509,10 @@ app.post('/editprofile', async (req, res) => {
   const { game3 } = req.body;
   const { game4 } = req.body;
   const { game5 } = req.body;
+  const { country } = req.body;
+  const { language } = req.body;
 
-  res.send(await DbApi.EditProfile(userID, newPass, gamerTag, game1, game2, game3, game4, game5));
+  res.send(await DbApi.EditProfile(userID, newPass, gamerTag, game1, game2, game3, game4, game5, country, language));
 });
 
 app.get('/matchingpage/:id', async (req, res) => {

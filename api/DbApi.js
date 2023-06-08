@@ -876,11 +876,15 @@ async function editUserPref(userID, game1, game2, game3, game4, game5) {
 
 }
 
-async function EditProfile(userID, newPass, Gamertag, game1, game2, game3, game4, game5) {
+async function EditProfile(userID, newPass, Gamertag, game1, game2, game3, game4, game5, country, language) {
   if (await checkIfGamerTagExistsInUsers(Gamertag)) return false;
   if (Gamertag) await User.updateOne({ _id: userID }, { GamerTag: Gamertag });
   if (newPass) await User.updateOne({ _id: userID }, { Password: newPass });
+  if (country) await User.updateOne({ _id: userID }, { Country: country });
+  if (language) await User.updateOne({ _id: userID }, { Language: language });
+  if(game1==1||game1==2||game1==3){
   await editUserPref(userID, game1, game2, game3, game4, game5);
+  }
   return true;
 }
 

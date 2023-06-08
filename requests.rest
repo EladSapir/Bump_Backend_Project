@@ -241,14 +241,16 @@ POST http://localhost:5000/editprofile
 Content-Type: application/json
 
 {
-    "userID":"646cd03b9f763e0775e8760b",
+    "userID":"646cd0519f763e0775e8761d",
     "newPass":"",
     "gamerTag":"",
-    "game1":"0",
+    "game1":"-1",
     "game2":"z",
     "game3":"x",
     "game4":"c",
-    "game5":"v"
+    "game5":"v",
+    "country":"tomer",
+    "language":"debil"
 }
 
 ######
@@ -265,13 +267,13 @@ Content-Type: application/json
     "userId":"646ccff49f763e0775e875e7",
     "language1":"",
     "country1":"",
-    "language2":"Hebrew",
-    "country2":"Israel",
-    "game1":"0",
-    "game2":"z",
-    "game3":"x",
-    "game4":"c",
-    "game5":"v"
+    "language2":"Russian",
+    "country2":"Italy",
+    "game1":"1",
+    "game2":"America",
+    "game3":"Ranked - Trio",
+    "game4":"Silver",
+    "game5":null
 }
 
 #####
