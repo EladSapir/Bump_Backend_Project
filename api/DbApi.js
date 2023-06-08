@@ -965,13 +965,18 @@ async function getNotification(userId){
 
   let users=[];
   userId=userId.toString();
+  let user;
   for (let index = 0; index < matches.length; index++) {
     if(userId==matches[index].userID1.toString())
     {
-      users.push(await getUserDetails(matches[index].userID2.toString()));
+      user=await getUserDetails(matches[index].userID2.toString());
+      user.updatedAt=matches[index].updatedAt;
+      users.push(user);
     }
     else{
-      users.push(await getUserDetails(matches[index].userID1.toString()));
+      user = await getUserDetails(matches[index].userID1.toString());
+      user.updatedAt=matches[index].updatedAt;
+      users.push(user);
     }
   }
   if(users.length==0)
