@@ -689,7 +689,7 @@ async function logOut(userId) {
 
 // returns the gamer tag and picture of a userid 
 async function getUserDetails(userId) {
-  var details = await User.findOne({ _id: userId }, 'GamerTag Picture Gender Language Country Discord' );
+  var details = await User.findOne({ _id: userId }, 'GamerTag Picture Gender Language Country Discord');
   if (details) {
     return details
   }
@@ -882,8 +882,8 @@ async function EditProfile(userID, newPass, Gamertag, game1, game2, game3, game4
   if (newPass) await User.updateOne({ _id: userID }, { Password: newPass });
   if (country) await User.updateOne({ _id: userID }, { Country: country });
   if (language) await User.updateOne({ _id: userID }, { Language: language });
-  if(game1==1||game1==2||game1==3){
-  await editUserPref(userID, game1, game2, game3, game4, game5);
+  if (game1 == 1 || game1 == 2 || game1 == 3) {
+    await editUserPref(userID, game1, game2, game3, game4, game5);
   }
   return true;
 }
@@ -912,79 +912,81 @@ async function getUserGameDetailsByPref(userId) {
 
 async function getPossibeUsersForMatching(userId, language1, country1, game1, game2, game3, game4, game5, language2, country2) {
   if (language1 && country1) {
-    await User.updateOne({ _id : userId }, { Language: language1, Country: country1 });
+    await User.updateOne({ _id: userId }, { Language: language1, Country: country1 });
   }
 
   else if (country1) {
-    await User.updateOne({ _id : userId }, { Country: country1 });
+    await User.updateOne({ _id: userId }, { Country: country1 });
   }
 
   else if (language1) {
-    await User.updateOne({ _id : userId }, { Language: language1 });
+    await User.updateOne({ _id: userId }, { Language: language1 });
   }
 
   let pref, possibleUsers, usersToRemove;
   //כל מה שהופיע כבר ליוזר והוא הגיב לו (חיובי או שלילי) לא יופיע יותר
-  usersToRemove = await Matches.find({ userID1: userId}, 'userID2');
- // אם היוזר הופיע למישהו אחר והוא הגיב חיובי או שלילי או שהיוזר כבר הגיב בשלילה אז הוא לא יופיע ליוזר, 
-  usersToRemove = usersToRemove.concat(await Matches.find({$or: [ { userID2: userId, check21:false },{ userID2: userId, check21:true },{ userID2: userId, check12:false }]}, 'userID1'));
+  usersToRemove = await Matches.find({ userID1: userId }, 'userID2');
+  // אם היוזר הופיע למישהו אחר והוא הגיב חיובי או שלילי או שהיוזר כבר הגיב בשלילה אז הוא לא יופיע ליוזר, 
+  usersToRemove = usersToRemove.concat(await Matches.find({ $or: [{ userID2: userId, check21: false }, { userID2: userId, check21: true }, { userID2: userId, check12: false }] }, 'userID1'));
 
-switch (game1) {
-  case "0":
-    pref = await LeagueOfLegends.findOne({Region:game2, Mode:game3, Role:game4, Rank: game5 }, '_id');
-    possibleUsers = await User.find({ LoLpref: pref._id, Country: country2, Language: language2 }, '_id');
-    break;
-  case "1":
-    pref = await RocketLeague.findOne({ Region:game2, Mode:game3, Rank: game4 }, '_id');
-    possibleUsers = await User.find({ RLpref: pref._id, Country: country2, Language: language2 }, '_id');
-    break;
-  case "2":
-    pref = await Valorant.findOne({ Server:game2, Rank:game3, Role: game4 }, '_id');
-    possibleUsers = await User.find({ Valpref: pref._id, Country: country2, Language: language2 }, '_id');
-    break;
-}
+  switch (game1) {
+    case "0":
+      pref = await LeagueOfLegends.findOne({ Region: game2, Mode: game3, Role: game4, Rank: game5 }, '_id');
+      possibleUsers = await User.find({ LoLpref: pref._id, Country: country2, Language: language2 }, '_id');
+      break;
+    case "1":
+      pref = await RocketLeague.findOne({ Region: game2, Mode: game3, Rank: game4 }, '_id');
+      possibleUsers = await User.find({ RLpref: pref._id, Country: country2, Language: language2 }, '_id');
+      break;
+    case "2":
+      pref = await Valorant.findOne({ Server: game2, Rank: game3, Role: game4 }, '_id');
+      possibleUsers = await User.find({ Valpref: pref._id, Country: country2, Language: language2 }, '_id');
+      break;
+  }
   const useridString = userId.toString();
-  let loggedin = await LoggedIn.find({},'userID');
-  loggedin=loggedin.map(obj => {return obj.userID.toString()});
+  let loggedin = await LoggedIn.find({}, 'userID');
+  loggedin = loggedin.map(obj => { return obj.userID.toString() });
   let filteredArray = possibleUsers.filter((element) => !usersToRemove.includes(element) && element._id.toString() != (useridString));
-  filteredArray=filteredArray.map(obj => {return obj._id.toString()});
-  let filterLoggedIn = filteredArray.filter((element)=> loggedin.includes(element));
+  filteredArray = filteredArray.map(obj => { return obj._id.toString() });
+  let filterLoggedIn = filteredArray.filter((element) => loggedin.includes(element));
   return filterLoggedIn;
 }
- 
-async function handleMatch(userid1,userid2,decision){
-  let match =await Matches.findOne({userID1:userid2,userID2:userid1});
-  if(match){
-    await Matches.updateOne({userID1:userid2,userID2:userid1},{check21:decision});
-  }else{
-  let newMatch = new Matches({userID1:userid1,userID2:userid2,check12:decision});
-  await newMatch.save().then((res) => { return res._id });}
-  return true;
+
+// gets two users and a decision, if both users decided yes, returns true, else false
+async function handleMatch(userid1, userid2, decision) {
+  let match = await Matches.findOne({ userID1: userid2, userID2: userid1 });
+  if (match) {
+    await Matches.updateOne({ userID1: userid2, userID2: userid1 }, { check21: decision });
+    if (decision && match.check12) return true;
+    else return false;
+  } else {
+    let newMatch = new Matches({ userID1: userid1, userID2: userid2, check12: decision });
+    await newMatch.save().then((res) => { return res._id });
+    return false;
+  }
 }
 
 
-async function getNotification(userId){
-  let matches = await Matches.find({$or: [ { userID1: userId, check21:true,check12:true },{ userID2: userId, check21:true,check12:true }]}, 'userID1 userID2 updatedAt');
+async function getNotification(userId) {
+  let matches = await Matches.find({ $or: [{ userID1: userId, check21: true, check12: true }, { userID2: userId, check21: true, check12: true }] }, 'userID1 userID2 updatedAt');
   matches.sort((a, b) => b.updatedAt - a.updatedAt);
 
-  let users=[];
-  userId=userId.toString();
+  let users = [];
+  userId = userId.toString();
   let user;
   for (let index = 0; index < matches.length; index++) {
-    if(userId==matches[index].userID1.toString())
-    {
-      user=await getUserDetails(matches[index].userID2.toString());
-      user.updatedAt=matches[index].updatedAt;
+    if (userId == matches[index].userID1.toString()) {
+      user = await getUserDetails(matches[index].userID2.toString());
+      user.updatedAt = matches[index].updatedAt;
       users.push(user);
     }
-    else{
+    else {
       user = await getUserDetails(matches[index].userID1.toString());
-      user.updatedAt=matches[index].updatedAt;
+      user.updatedAt = matches[index].updatedAt;
       users.push(user);
     }
   }
-  if(users.length==0)
-  {
+  if (users.length == 0) {
     return false;
   }
   return users;
