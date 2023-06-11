@@ -452,6 +452,7 @@ async function removePost(postId) {
   await Bumps.deleteMany({ postID: postId });
   await Comments.deleteMany({ postID: postId });
   await Shares.deleteMany({ postID: postId });
+  await Shares.deleteMany({ _id: postId });
   await SavedPosts.deleteMany({ postID: postId });
   return true;
 }
