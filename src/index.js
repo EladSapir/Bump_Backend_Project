@@ -428,10 +428,16 @@ app.post('/profile', async (req, res) => {
 app.get('/profile/saved/:id', async (req, res) => {
   const { id } = req.params;
   const savedpost = await DbApi.getThePostsAUserSaved(id);
-  for (let index = 0; index < savedpost.length; index++) {
-    savedpost[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(id, savedpost[index]._id);
-    savedpost[index].hasUserSaved = await DbApi.checkIfUserSavedPost(id, savedpost[index]._id);
-  }
+
+  await Promise.all(
+    savedpost.map(async (post) => {
+      // eslint-disable-next-line no-param-reassign
+      post.hasUserBumped = await DbApi.checkIfUserBumpedPost(id, post._id);
+      // eslint-disable-next-line no-param-reassign
+      post.hasUserSaved = await DbApi.checkIfUserSavedPost(id, post._id);
+    }),
+  );
+
   if (savedpost.length > 0) {
     res.json({ savedpost });
   } else {
@@ -453,18 +459,32 @@ app.get('/profile/bumped/:id', async (req, res) => {
   }
 });
 
-// return the stats of a user to the front
 app.get('/profile/stats/:id', async (req, res) => {
   const { id } = req.params;
-  const bumps = await DbApi.countBumpsOnUserID(id);
-  const comments = await DbApi.countCommentsOnUserID(id);
-  const onlinetime = await DbApi.getTimeOnLine(id);
-  const matches = await DbApi.countNumberOfMatch(id);
-  const posts = await DbApi.countNumberOfPost(id);
+
+  const [
+    bumps,
+    comments,
+    onlinetime,
+    matches,
+    posts,
+  ] = await Promise.all([
+    DbApi.countBumpsOnUserID(id),
+    DbApi.countCommentsOnUserID(id),
+    DbApi.getTimeOnLine(id),
+    DbApi.countNumberOfMatch(id),
+    DbApi.countNumberOfPost(id),
+  ]);
+
   res.json({
-    bumps, comments, onlinetime, matches, posts,
+    bumps,
+    comments,
+    onlinetime,
+    matches,
+    posts,
   });
 });
+
 
 // remove a user from the db
 app.get('/removeuser/:id', async (req, res) => {
