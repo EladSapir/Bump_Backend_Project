@@ -372,41 +372,57 @@ app.post('/removebumpfromshare', async (req, res) => {
 
 // fetch profile
 app.post('/profile', async (req, res) => {
-  const { profileid } = req.body;
-  const { idtocheck } = req.body;
-  const user = await DbApi.getUserDetails(profileid);
-  const user2 = await DbApi.getUserDetails(idtocheck);
-  let posts = [];
-  posts = posts.concat(await DbApi.getThePostsAUserShared(profileid));
-  posts = posts.concat(await DbApi.getThePostsOfAUser(profileid));
+  const { profileid, idtocheck } = req.body;
+
+  const [
+    user,
+    user2,
+    postsAUserShared,
+    postsOfAUser,
+    followers,
+    follows,
+    iffollows,
+    games,
+  ] = await Promise.all([
+    DbApi.getUserDetails(profileid),
+    DbApi.getUserDetails(idtocheck),
+    DbApi.getThePostsAUserShared(profileid),
+    DbApi.getThePostsOfAUser(profileid),
+    DbApi.whoFollowsTheID(profileid),
+    DbApi.whoIDFollows(profileid),
+    DbApi.ifFollow(idtocheck, profileid),
+    DbApi.getUserGameDetailsByPref(profileid),
+  ]);
+
+  // eslint-disable-next-line prefer-const
+  let posts = postsAUserShared.concat(postsOfAUser);
   posts.sort((a, b) => b.date - a.date);
-  for (let index = 0; index < posts.length; index++) {
-    posts[index].hasUserBumped = await DbApi.checkIfUserBumpedPost(idtocheck, posts[index]._id);
-    posts[index].hasUserSaved = await DbApi.checkIfUserSavedPost(idtocheck, posts[index]._id);
-  }
-  const followers = await DbApi.whoFollowsTheID(profileid);
-  const follows = await DbApi.whoIDFollows(profileid);
-  const iffollows = await DbApi.ifFollow(idtocheck, profileid);
-  const games = await DbApi.getUserGameDetailsByPref(profileid);
-  let LOL = null;
-  let RL = null;
-  let VAL = null;
-  if (games.LOL)
-  {
-    LOL = games.LOL;
-  }
-  if (games.RL)
-  {
-    RL = games.RL;
-  }
-  if (games.VAL)
-  {
-    VAL = games.VAL;
-  }
+
+  await Promise.all(
+    posts.map(async (post) => {
+      // eslint-disable-next-line no-param-reassign
+      post.hasUserBumped = await DbApi.checkIfUserBumpedPost(idtocheck, post._id);
+      // eslint-disable-next-line no-param-reassign
+      post.hasUserSaved = await DbApi.checkIfUserSavedPost(idtocheck, post._id);
+    }),
+  );
+
+  const { LOL, RL, VAL } = games;
+
   res.json({
-    user, posts, followers, follows, iffollows, user2, RL, VAL, LOL,
+    user,
+    posts,
+    followers,
+    follows,
+    iffollows,
+    user2,
+    RL,
+    VAL,
+    LOL,
   });
 });
+
+
 
 // return the saved post of the user to the front
 app.get('/profile/saved/:id', async (req, res) => {
