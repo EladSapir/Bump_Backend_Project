@@ -451,6 +451,11 @@ async function removePost(postId) {
   await Posts.deleteOne({ _id: postId });
   await Bumps.deleteMany({ postID: postId });
   await Comments.deleteMany({ postID: postId });
+  let bumpedshares = await Shares.find({ postID: postId }, { _id: 1 });
+  for (let index = 0; index < bumpedshares.length; index++) {
+    await Bumps.deleteMany({ postID: bumpedshares[index]._id });
+    await Comments.deleteMany({ postID: bumpedshares[index]._id });
+  }
   await Shares.deleteMany({ postID: postId });
   await Shares.deleteMany({ _id: postId });
   await SavedPosts.deleteMany({ postID: postId });
