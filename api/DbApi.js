@@ -929,11 +929,17 @@ async function getPossibeUsersForMatching(userId, language1, country1, game1, ga
     await User.updateOne({ _id: userId }, { Language: language1 });
   }
 
-  let pref, possibleUsers, usersToRemove;
+  let pref, possibleUsers, usersToRemove1, usersToRemove2, usersToRemove;
   //כל מה שהופיע כבר ליוזר והוא הגיב לו (חיובי או שלילי) לא יופיע יותר
-  usersToRemove = await Matches.find({ userID1: userId }, 'userID2');
+  usersToRemove1 = await Matches.find({ userID1: userId }, 'userID2');
+  usersToRemove1 = usersToRemove1.map(obj => { return obj.userID2.toString() });
+  console.log(usersToRemove1);
   // אם היוזר הופיע למישהו אחר והוא הגיב חיובי או שלילי או שהיוזר כבר הגיב בשלילה אז הוא לא יופיע ליוזר, 
-  usersToRemove = usersToRemove.concat(await Matches.find({ $or: [{ userID2: userId, check21: false }, { userID2: userId, check21: true }, { userID2: userId, check12: false }] }, 'userID1'));
+  usersToRemove2 = await Matches.find({ $or: [{ userID2: userId, check21: false }, { userID2: userId, check21: true }, { userID2: userId, check12: false }] }, 'userID1');
+  usersToRemove2 = usersToRemove2.map(obj => { return obj.userID1.toString() });
+  console.log(usersToRemove);
+
+  usersToRemove = usersToRemove1.concat(usersToRemove2);
 
   switch (game1) {
     case "0":
@@ -941,7 +947,9 @@ async function getPossibeUsersForMatching(userId, language1, country1, game1, ga
       possibleUsers = await User.find({ LoLpref: pref._id, Country: country2, Language: language2 }, '_id');
       break;
     case "1":
-      pref = await RocketLeague.findOne({ Region: game2, Mode: game3, Rank: game4 }, '_id');
+      console.log(game2, game3, game4);
+      pref = await RocketLeague.findOne({ Region: game2, Mode: game3, Rank: game4 });
+      console.log(pref);
       possibleUsers = await User.find({ RLpref: pref._id, Country: country2, Language: language2 }, '_id');
       break;
     case "2":
@@ -952,9 +960,12 @@ async function getPossibeUsersForMatching(userId, language1, country1, game1, ga
   const useridString = userId.toString();
   let loggedin = await LoggedIn.find({}, 'userID');
   loggedin = loggedin.map(obj => { return obj.userID.toString() });
-  let filteredArray = possibleUsers.filter((element) => !usersToRemove.includes(element) && element._id.toString() != (useridString));
+  console.log(loggedin);
+  let filteredArray = possibleUsers.filter((element) => !usersToRemove.includes(element._id.toString()) && element._id.toString() != (useridString));
   filteredArray = filteredArray.map(obj => { return obj._id.toString() });
+  console.log(filteredArray);
   let filterLoggedIn = filteredArray.filter((element) => loggedin.includes(element));
+  console.log(filterLoggedIn);
   return filterLoggedIn;
 }
 
