@@ -974,7 +974,11 @@ async function handleMatch(userid1, userid2, decision) {
   let match = await Matches.findOne({ userID1: userid2, userID2: userid1 });
   if (match) {
     await Matches.updateOne({ userID1: userid2, userID2: userid1 }, { check21: decision });
-    if (decision && match.check12) return true;
+    if (decision && match.check12) {
+      await User.updateOne({ _id: userid1 }, { $inc: { CountMatches: 1 } });
+      await User.updateOne({ _id: userid2 }, { $inc: { CountMatches: 1 } });
+      return true;
+    }
     else return false;
   } else {
     let newMatch = new Matches({ userID1: userid1, userID2: userid2, check12: decision });
